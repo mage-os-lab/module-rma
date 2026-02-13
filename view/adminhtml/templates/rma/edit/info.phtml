@@ -1,0 +1,91 @@
+<?php
+
+use MageOS\RMA\Block\Adminhtml\Rma\Edit\Info;
+use MageOS\RMA\Api\Data\RMAInterface;
+
+/**
+ * @var Info $block
+ * @var RMAInterface $rma
+ */
+$rma = $block->getRma();
+
+if (!$rma) {
+    return;
+}
+
+$orderId = (int)$rma->getOrderId();
+$storeId = (int)$rma->getStoreId();
+$orderIncrementId = $block->getOrderIncrementId($orderId);
+$customerId = $rma->getCustomerId();
+$customerName = $block->escapeHtml($rma->getCustomerName());
+$customerEmail = $block->escapeHtml($rma->getCustomerEmail());
+$isGuest = empty($customerId);
+$createdAt = $block->getFormattedDate($rma->getCreatedAt(), $storeId);
+$storeName = $block->escapeHtml($block->getStoreName($storeId), ['br']);
+?>
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('RMA Information')) ?></span>
+    </div>
+<div class="admin__page-section-content rma-info-columns">
+    <div class="admin__page-section-item rma-info-left">
+        <div class="admin__page-section-item-title">
+            <span class="title"><?= $block->escapeHtml(__('RMA Details')) ?></span>
+        </div>
+        <div class="admin__page-section-item-content">
+            <table class="admin__table-secondary">
+                <tr>
+                    <th><?= $block->escapeHtml(__('RMA #')) ?></th>
+                    <td><?= $block->escapeHtml($rma->getIncrementId()) ?></td>
+                </tr>
+                <tr>
+                    <th><?= $block->escapeHtml(__('Purchased From')) ?></th>
+                    <td><?= $storeName ?></td>
+                </tr>
+                <tr>
+                    <th><?= $block->escapeHtml(__('Created At')) ?></th>
+                    <td><?= $block->escapeHtml($createdAt) ?></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="admin__page-section-item rma-info-right">
+        <div class="admin__page-section-item-title">
+            <span class="title"><?= $block->escapeHtml(__('Customer & Order')) ?></span>
+        </div>
+        <div class="admin__page-section-item-content">
+            <table class="admin__table-secondary">
+                <tr>
+                    <th><?= $block->escapeHtml(__('Order #')) ?></th>
+                    <td>
+                        <?php if ($orderIncrementId): ?>
+                            <a href="<?= $block->escapeUrl($block->getOrderUrl($orderId)) ?>">#<?= $block->escapeHtml($orderIncrementId) ?></a>
+                        <?php else: ?>
+                            <?= (int)$orderId ?>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?= $block->escapeHtml(__('Customer')) ?></th>
+                    <td>
+                        <?php if ($isGuest): ?>
+                            <?= $customerName ?> <span class="rma-guest-label">(<?= $block->escapeHtml(__('Guest')) ?>)</span>
+                        <?php else: ?>
+                            <a href="<?= $block->escapeUrl($block->getCustomerUrl((int)$customerId)) ?>"><?= $customerName ?></a>
+                        <?php endif; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <th><?= $block->escapeHtml(__('Email')) ?></th>
+                    <td><a href="mailto:<?= $customerEmail ?>"><?= $customerEmail ?></a></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</section>
+<style>
+    .rma-info-columns { display: flex; gap: 2rem; }
+    .rma-info-columns .admin__page-section-item { flex: 1; min-width: 0; }
+    .rma-guest-label { color: #999; font-style: italic; }
+</style>

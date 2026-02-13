@@ -1,0 +1,103 @@
+<?php
+
+use MageOS\RMA\Block\Customer\Rma\View;
+
+/**
+ * @var View $block
+ */
+
+$rma = $block->getRma();
+if (!$rma) {
+    return;
+}
+$items = $block->getRmaItems();
+?>
+<div class="block block-rma-view">
+    <div class="block-title">
+        <a href="<?= $block->escapeUrl($block->getBackUrl()) ?>" class="action back">
+            <span><?= $block->escapeHtml(__('Back to My Returns')) ?></span>
+        </a>
+    </div>
+
+    <div class="block-content">
+        <div class="box box-rma-info">
+            <strong class="box-title">
+                <span><?= $block->escapeHtml(__('Return Information')) ?></span>
+            </strong>
+            <div class="box-content">
+                <table class="data table table-rma-info">
+                    <tbody>
+                        <tr>
+                            <th scope="row"><?= $block->escapeHtml(__('RMA #')) ?></th>
+                            <td><?= $block->escapeHtml($rma->getIncrementId()) ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?= $block->escapeHtml(__('Order #')) ?></th>
+                            <td>#<?= $block->escapeHtml($block->getOrderIncrementId()) ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?= $block->escapeHtml(__('Status')) ?></th>
+                            <td><strong><?= $block->escapeHtml($block->getStatusLabel()) ?></strong></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?= $block->escapeHtml(__('Reason')) ?></th>
+                            <td><?= $block->escapeHtml($block->getReasonLabel()) ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?= $block->escapeHtml(__('Preferred Resolution')) ?></th>
+                            <td><?= $block->escapeHtml($block->getResolutionTypeLabel()) ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?= $block->escapeHtml(__('Created At')) ?></th>
+                            <td><?= $block->escapeHtml($block->formatDate($rma->getCreatedAt(), \IntlDateFormatter::MEDIUM, true)) ?></td>
+                        </tr>
+                        <tr>
+                            <th scope="row"><?= $block->escapeHtml(__('Updated At')) ?></th>
+                            <td><?= $block->escapeHtml($block->formatDate($rma->getUpdatedAt(), \IntlDateFormatter::MEDIUM, true)) ?></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <?php if (!empty($items)): ?>
+            <div class="box box-rma-items">
+                <strong class="box-title">
+                    <span><?= $block->escapeHtml(__('Items to Return')) ?></span>
+                </strong>
+                <div class="box-content">
+                    <div class="table-wrapper">
+                        <table class="data table table-rma-items">
+                            <thead>
+                                <tr>
+                                    <th scope="col"><?= $block->escapeHtml(__('Product')) ?></th>
+                                    <th scope="col"><?= $block->escapeHtml(__('SKU')) ?></th>
+                                    <th scope="col"><?= $block->escapeHtml(__('Quantity')) ?></th>
+                                    <th scope="col"><?= $block->escapeHtml(__('Condition')) ?></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($items as $item): ?>
+                                    <tr>
+                                        <td data-th="<?= $block->escapeHtmlAttr(__('Product')) ?>">
+                                            <?= $block->escapeHtml($item['name']) ?>
+                                        </td>
+                                        <td data-th="<?= $block->escapeHtmlAttr(__('SKU')) ?>">
+                                            <?= $block->escapeHtml($item['sku']) ?>
+                                        </td>
+                                        <td data-th="<?= $block->escapeHtmlAttr(__('Quantity')) ?>">
+                                            <?= (int)$item['qty_requested'] ?>
+                                        </td>
+                                        <td data-th="<?= $block->escapeHtmlAttr(__('Condition')) ?>">
+                                            <?= $block->escapeHtml($item['condition_label']) ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

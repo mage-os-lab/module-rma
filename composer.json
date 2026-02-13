@@ -1,0 +1,29 @@
+{
+    "name": "mage-os/module-rma",
+    "description": "Return Merchandise Authorization",
+    "type": "magento2-module",
+    "require": {
+        "magento/framework": "*"
+    },
+    "authors": [
+        {
+            "name": "Samuele Martini",
+            "email": "samuele.rw@gmail.com"
+        },
+        {
+            "name": "Davide Lunardon",
+            "email": "dadolun@gmail.com"
+        }
+    ],
+    "license": [
+        "MIT"
+    ],
+    "autoload": {
+        "files": [
+            "registration.php"
+        ],
+        "psr-4": {
+            "MageOS\\RMA\\": ""
+        }
+    }
+}

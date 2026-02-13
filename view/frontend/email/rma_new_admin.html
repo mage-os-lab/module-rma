@@ -1,0 +1,47 @@
+<!--@subject {{trans "New RMA Request #%increment_id" increment_id=$rma.increment_id}} @-->
+<!--@vars {
+"var customer_name":"Customer Name",
+"var customer_email":"Customer Email",
+"var rma.increment_id":"RMA Increment ID",
+"var order.increment_id":"Order Increment ID",
+"var rma_reason_label":"RMA Reason",
+"var rma_resolution_label":"RMA Resolution Type",
+"var store.frontend_name":"Store Name"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<table>
+    <tr class="email-intro">
+        <td>
+            <p>
+                {{trans "A new return request <strong>#%increment_id</strong> has been submitted." increment_id=$rma.increment_id |raw}}
+            </p>
+        </td>
+    </tr>
+    <tr class="email-information">
+        <td>
+            <table class="order-details">
+                <tr>
+                    <td>
+                        <h3>{{trans "RMA Details"}}</h3>
+                        <ul>
+                            <li><strong>{{trans "RMA Number:"}}</strong> {{var rma.increment_id}}</li>
+                            <li><strong>{{trans "Order Number:"}}</strong> {{var order.increment_id}}</li>
+                            <li><strong>{{trans "Customer:"}}</strong> {{var customer_name}} ({{var customer_email}})</li>
+                            <li><strong>{{trans "Store:"}}</strong> {{var store.frontend_name}}</li>
+                            {{depend rma_reason_label}}
+                            <li><strong>{{trans "Reason:"}}</strong> {{var rma_reason_label}}</li>
+                            {{/depend}}
+                            {{depend rma_resolution_label}}
+                            <li><strong>{{trans "Resolution:"}}</strong> {{var rma_resolution_label}}</li>
+                            {{/depend}}
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+{{template config_path="design/email/footer_template"}}

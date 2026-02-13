@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceContainer name="content">
+            <uiComponent name="rma_form"/>
+            <block class="MageOS\RMA\Block\Adminhtml\Rma\Edit\Comments"
+                   name="rma.comments"
+                   template="MageOS_RMA::rma/edit/comments.phtml"/>
+        </referenceContainer>
+    </body>
+</page>

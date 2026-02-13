@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="rma" translate="label" sortOrder="320" showInDefault="1" showInWebsite="1" showInStore="1">
+            <label>RMA - Return Management</label>
+            <tab>sales</tab>
+            <resource>MageOS_RMA::config</resource>
+            <group id="general" translate="label" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable RMA</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Enable or disable the RMA functionality.</comment>
+                </field>
+                <field id="increment_id_prefix" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Increment ID Prefix</label>
+                    <comment>Prefix for the RMA increment ID (e.g. RMA-).</comment>
+                </field>
+                <field id="return_period" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Return Period (Days)</label>
+                    <validate>validate-digits</validate>
+                    <comment>Number of days after order completion within which a return can be requested.</comment>
+                </field>
+            </group>
+            <group id="policy" translate="label" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                <label>Policy</label>
+                <field id="auto_approve" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Auto-Approve Returns</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>If enabled, new RMA requests will be automatically approved.</comment>
+                </field>
+                <field id="allowed_order_statuses" translate="label comment" type="multiselect" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Allowed Order Statuses</label>
+                    <source_model>MageOS\RMA\Model\Config\Source\OrderStatuses</source_model>
+                    <comment>Only orders with these statuses can have a return request.</comment>
+                    <can_be_empty>0</can_be_empty>
+                </field>
+            </group>
+            <group id="email" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Email Notifications</label>
+                <field id="sender_identity" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Email Sender</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Identity</source_model>
+                </field>
+                <field id="customer_new_template" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>New RMA Email Template (Customer)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <comment>Email sent to the customer when a new RMA is created.</comment>
+                </field>
+                <field id="customer_status_change_template" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Status Change Email Template (Customer)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <comment>Email sent to the customer when the RMA status changes.</comment>
+                </field>
+                <field id="admin_new_template" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>New RMA Email Template (Admin)</label>
+                    <source_model>Magento\Config\Model\Config\Source\Email\Template</source_model>
+                    <comment>Email sent to the admin when a new RMA is created.</comment>
+                </field>
+                <field id="admin_notify_email" translate="label comment" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Admin Notification Email</label>
+                    <validate>validate-email</validate>
+                    <comment>Email address to receive admin RMA notifications.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

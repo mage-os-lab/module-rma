@@ -1,0 +1,66 @@
+<?php
+use MageOS\RMA\Block\Customer\Rma\ListRma;
+
+/**
+ * @var ListRma $block
+ */
+
+$rmaCollection = $block->getRmaCollection();
+?>
+<div class="block block-rma-history">
+    <div class="block-title">
+        <a href="<?= $block->escapeUrl($block->getCreateUrl()) ?>" class="action create primary">
+            <span><?= $block->escapeHtml(__('Request Return')) ?></span>
+        </a>
+    </div>
+    <div class="block-content">
+        <?php if ($rmaCollection && $rmaCollection->getSize()): ?>
+            <div class="table-wrapper rma-history">
+                <table class="data table table-rma-history" id="rma-history-table">
+                    <caption class="table-caption"><?= $block->escapeHtml(__('My Returns')) ?></caption>
+                    <thead>
+                        <tr>
+                            <th scope="col" class="col id"><?= $block->escapeHtml(__('RMA #')) ?></th>
+                            <th scope="col" class="col order"><?= $block->escapeHtml(__('Order #')) ?></th>
+                            <th scope="col" class="col status"><?= $block->escapeHtml(__('Status')) ?></th>
+                            <th scope="col" class="col date"><?= $block->escapeHtml(__('Created At')) ?></th>
+                            <th scope="col" class="col actions"><?= $block->escapeHtml(__('Action')) ?></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($rmaCollection as $rma): ?>
+                            <tr>
+                                <td data-th="<?= $block->escapeHtmlAttr(__('RMA #')) ?>" class="col id">
+                                    <?= $block->escapeHtml($rma->getIncrementId()) ?>
+                                </td>
+                                <td data-th="<?= $block->escapeHtmlAttr(__('Order #')) ?>" class="col order">
+                                    #<?= $block->escapeHtml($block->getOrderIncrementId((int)$rma->getOrderId())) ?>
+                                </td>
+                                <td data-th="<?= $block->escapeHtmlAttr(__('Status')) ?>" class="col status">
+                                    <?= $block->escapeHtml($block->getStatusLabel((int)$rma->getStatusId())) ?>
+                                </td>
+                                <td data-th="<?= $block->escapeHtmlAttr(__('Created At')) ?>" class="col date">
+                                    <?= $block->escapeHtml($block->formatDate($rma->getCreatedAt(), \IntlDateFormatter::MEDIUM)) ?>
+                                </td>
+                                <td data-th="<?= $block->escapeHtmlAttr(__('Action')) ?>" class="col actions">
+                                    <a href="<?= $block->escapeUrl($block->getViewUrl($rma)) ?>" class="action view">
+                                        <span><?= $block->escapeHtml(__('View')) ?></span>
+                                    </a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php if ($block->getPagerHtml()): ?>
+                <div class="toolbar rma-toolbar bottom">
+                    <?= $block->getPagerHtml() ?>
+                </div>
+            <?php endif; ?>
+        <?php else: ?>
+            <div class="message info empty">
+                <span><?= $block->escapeHtml(__('You have no return requests.')) ?></span>
+            </div>
+        <?php endif; ?>
+    </div>
+</div>

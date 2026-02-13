@@ -1,0 +1,68 @@
+<?php
+
+use MageOS\RMA\Block\Adminhtml\Rma\Edit\OrderItems;
+
+/**
+ * @var OrderItems $block
+ */
+
+$isEdit = $block->isEditMode();
+$rmaItems = $isEdit ? $block->getRmaItems() : null;
+?>
+
+<?php if ($isEdit && $rmaItems): ?>
+<section class="admin__page-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Requested Items')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <table class="admin__table-secondary rma-items-table">
+            <thead>
+                <tr>
+                    <th><?= $block->escapeHtml(__('Product Name')) ?></th>
+                    <th><?= $block->escapeHtml(__('SKU')) ?></th>
+                    <th><?= $block->escapeHtml(__('Qty Requested')) ?></th>
+                    <th><?= $block->escapeHtml(__('Condition')) ?></th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach ($rmaItems as $item): ?>
+                    <?php $orderItemInfo = $block->getOrderItemInfo((int)$item->getOrderItemId()); ?>
+                    <tr>
+                        <td><?= $block->escapeHtml($orderItemInfo['name']) ?></td>
+                        <td><?= $block->escapeHtml($orderItemInfo['sku']) ?></td>
+                        <td><?= (int)$item->getQtyRequested() ?></td>
+                        <td><?= $block->escapeHtml($block->getConditionLabel($item->getConditionId())) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            </tbody>
+        </table>
+    </div>
+</section>
+<?php elseif (!$isEdit): ?>
+<section class="admin__page-section" id="rma-order-items-section">
+    <div class="admin__page-section-title">
+        <span class="title"><?= $block->escapeHtml(__('Order Items')) ?></span>
+    </div>
+    <div class="admin__page-section-content">
+        <div id="rma-order-items-container">
+            <p class="rma-items-message"><?= $block->escapeHtml(__('Select an order to see available items.')) ?></p>
+        </div>
+    </div>
+</section>
+<?php endif; ?>
+
+<style>
+    .rma-items-table { width: 100%; }
+    .rma-items-table thead th { text-align: left; padding: 8px; font-weight: 600; border-bottom: 1px solid #ccc; }
+    .rma-items-table tbody td { padding: 8px; border-bottom: 1px solid #e3e3e3; }
+    .rma-items-message { color: #999; font-style: italic; padding: 10px 0; }
+    .rma-items-row-disabled td { opacity: 0.5; }
+    .rma-items-row-disabled .rma-fully-returned { color: #e22626; font-style: italic; font-size: 0.9em; }
+    #rma-order-items-container table { width: 100%; border-collapse: collapse; }
+    #rma-order-items-container table th { text-align: left; padding: 8px; font-weight: 600; border-bottom: 1px solid #ccc; }
+    #rma-order-items-container table td { padding: 8px; border-bottom: 1px solid #e3e3e3; }
+    #rma-order-items-container input[type="number"] { width: 60px; }
+    #rma-order-items-container select { min-width: 120px; }
+    #rma-order-items-container input[type="checkbox"] { margin-right: 5px; }
+</style>

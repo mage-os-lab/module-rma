@@ -1,0 +1,103 @@
+<?php
+
+use MageOS\RMA\Block\Customer\Rma\Create;
+
+/**
+ * @var Create $block
+ */
+
+$eligibleOrders = $block->getEligibleOrders();
+$preselectedOrderId = $block->getPreselectedOrderId();
+$reasons = $block->getReasons();
+$resolutionTypes = $block->getResolutionTypes();
+$conditions = $block->getConditions();
+?>
+<div class="block block-rma-create">
+    <div class="block-content">
+        <form id="rma-create-form"
+              action="<?= $block->escapeUrl($block->getPostUrl()) ?>"
+              method="post"
+              data-mage-init='{"MageOS_RMA/js/rma-create": {
+                  "itemsAjaxUrl": "<?= $block->escapeUrl($block->getItemsAjaxUrl()) ?>",
+                  "conditions": <?= /* @noEscape */ json_encode($conditions) ?>
+              }}'>
+            <?= /* @noEscape */ $block->getBlockHtml('formkey') ?>
+
+            <fieldset class="fieldset">
+                <legend class="legend"><span><?= $block->escapeHtml(__('Return Details')) ?></span></legend>
+
+                <div class="field field-order required">
+                    <label class="label" for="order_id">
+                        <span><?= $block->escapeHtml(__('Order')) ?></span>
+                    </label>
+                    <div class="control">
+                        <select name="order_id" id="order_id" class="select" required
+                                <?php if ($preselectedOrderId): ?>disabled="disabled"<?php endif; ?>>
+                            <option value=""><?= $block->escapeHtml(__('-- Select an order --')) ?></option>
+                            <?php foreach ($eligibleOrders as $order): ?>
+                                <option value="<?= (int)$order['value'] ?>"
+                                        <?php if ($preselectedOrderId === (int)$order['value']): ?>selected="selected"<?php endif; ?>>
+                                    <?= $block->escapeHtml($order['label']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <?php if ($preselectedOrderId): ?>
+                            <input type="hidden" name="order_id" value="<?= (int)$preselectedOrderId ?>"/>
+                        <?php endif; ?>
+                    </div>
+                </div>
+
+                <div id="rma-order-items-container" class="field">
+                    <div class="message info">
+                        <span><?= $block->escapeHtml(__('Select an order to see available items.')) ?></span>
+                    </div>
+                </div>
+
+                <div class="field field-reason required">
+                    <label class="label" for="reason_id">
+                        <span><?= $block->escapeHtml(__('Reason')) ?></span>
+                    </label>
+                    <div class="control">
+                        <select name="reason_id" id="reason_id" class="select" required>
+                            <option value=""><?= $block->escapeHtml(__('-- Select a reason --')) ?></option>
+                            <?php foreach ($reasons as $reason): ?>
+                                <option value="<?= (int)$reason['value'] ?>">
+                                    <?= $block->escapeHtml($reason['label']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field field-resolution required">
+                    <label class="label" for="resolution_type_id">
+                        <span><?= $block->escapeHtml(__('Preferred Resolution')) ?></span>
+                    </label>
+                    <div class="control">
+                        <select name="resolution_type_id" id="resolution_type_id" class="select" required>
+                            <option value=""><?= $block->escapeHtml(__('-- Select a resolution --')) ?></option>
+                            <?php foreach ($resolutionTypes as $resolution): ?>
+                                <option value="<?= (int)$resolution['value'] ?>">
+                                    <?= $block->escapeHtml($resolution['label']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <button type="submit" class="action submit primary" title="<?= $block->escapeHtmlAttr(__('Submit Return Request')) ?>">
+                        <span><?= $block->escapeHtml(__('Submit Return Request')) ?></span>
+                    </button>
+                </div>
+                <div class="secondary">
+                    <a href="<?= $block->escapeUrl($block->getBackUrl()) ?>" class="action back">
+                        <span><?= $block->escapeHtml(__('Back')) ?></span>
+                    </a>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

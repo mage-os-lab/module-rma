@@ -1,0 +1,40 @@
+<!--@subject {{trans "Update to your RMA Request #%increment_id from %store_name" increment_id=$rma.increment_id store_name=$store.frontend_name}} @-->
+<!--@vars {
+"var customer_name":"Customer Name",
+"var rma.increment_id":"RMA Increment ID",
+"var order.increment_id":"Order Increment ID",
+"var rma_status_label":"New RMA Status",
+"var store.frontend_name":"Store Name",
+"var store_email":"Store Email",
+"var store_phone":"Store Phone",
+"var store_hours":"Store Hours",
+"var this.getUrl($store,'customer/account/',[_nosid:1])":"Customer Account URL"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<table>
+    <tr class="email-intro">
+        <td>
+            <p class="greeting">{{trans "%name," name=$customer_name}}</p>
+            <p>
+                {{trans "Your return request <strong>#%increment_id</strong> for order <strong>#%order_increment_id</strong> has been updated with a status of <strong>%status</strong>." increment_id=$rma.increment_id order_increment_id=$order.increment_id status=$rma_status_label |raw}}
+            </p>
+        </td>
+    </tr>
+    <tr class="email-information">
+        <td>
+            <p>
+                {{trans 'You can check the status of your return request by <a href="%account_url">logging into your account</a>.' account_url=$this.getUrl($store,'customer/account/',[_nosid:1]) |raw}}
+            </p>
+            <p>
+                {{trans 'If you have questions, you can email us at <a href="mailto:%store_email">%store_email</a>' store_email=$store_email |raw}}{{depend store_phone}} {{trans 'or call us at <a href="tel:%store_phone">%store_phone</a>' store_phone=$store_phone |raw}}{{/depend}}.
+                {{depend store_hours}}
+                    {{trans 'Our hours are <span class="no-link">%store_hours</span>.' store_hours=$store_hours |raw}}
+                {{/depend}}
+            </p>
+        </td>
+    </tr>
+</table>
+
+{{template config_path="design/email/footer_template"}}

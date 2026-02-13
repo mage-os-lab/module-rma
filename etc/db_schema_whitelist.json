@@ -1,0 +1,189 @@
+{
+    "rma_entity": {
+        "column": {
+            "entity_id": true,
+            "increment_id": true,
+            "order_id": true,
+            "customer_id": true,
+            "store_id": true,
+            "customer_email": true,
+            "customer_name": true,
+            "status_id": true,
+            "reason_id": true,
+            "resolution_type_id": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_ENTITY_INCREMENT_ID": true,
+            "RMA_ENTITY_ORDER_ID_SALES_ORDER_ENTITY_ID": true,
+            "RMA_ENTITY_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID": true,
+            "RMA_ENTITY_STORE_ID_STORE_STORE_ID": true,
+            "RMA_ENTITY_STATUS_ID_RMA_STATUS_ENTITY_ID": true,
+            "RMA_ENTITY_REASON_ID_RMA_REASON_ENTITY_ID": true,
+            "RMA_ENTITY_RESOLUTION_TYPE_ID_RMA_RESOLUTION_TYPE_ENTITY_ID": true
+        },
+        "index": {
+            "RMA_ENTITY_ORDER_ID": true,
+            "RMA_ENTITY_CUSTOMER_ID": true,
+            "RMA_ENTITY_STORE_ID": true,
+            "RMA_ENTITY_STATUS_ID": true
+        }
+    },
+    "rma_item_condition": {
+        "column": {
+            "entity_id": true,
+            "code": true,
+            "label": true,
+            "is_active": true,
+            "sort_order": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_ITEM_CONDITION_CODE": true
+        }
+    },
+    "rma_item": {
+        "column": {
+            "entity_id": true,
+            "rma_id": true,
+            "order_item_id": true,
+            "qty_requested": true,
+            "qty_approved": true,
+            "qty_returned": true,
+            "condition_id": true,
+            "created_at": true,
+            "updated_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_ITEM_RMA_ID_RMA_ENTITY_ENTITY_ID": true,
+            "RMA_ITEM_ORDER_ITEM_ID_SALES_ORDER_ITEM_ITEM_ID": true,
+            "RMA_ITEM_CONDITION_ID_RMA_ITEM_CONDITION_ENTITY_ID": true
+        },
+        "index": {
+            "RMA_ITEM_RMA_ID": true,
+            "RMA_ITEM_ORDER_ITEM_ID": true,
+            "RMA_ITEM_CONDITION_ID": true
+        }
+    },
+    "rma_status": {
+        "column": {
+            "entity_id": true,
+            "code": true,
+            "label": true,
+            "is_active": true,
+            "sort_order": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_STATUS_CODE": true
+        }
+    },
+    "rma_reason": {
+        "column": {
+            "entity_id": true,
+            "code": true,
+            "label": true,
+            "is_active": true,
+            "sort_order": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_REASON_CODE": true
+        }
+    },
+    "rma_resolution_type": {
+        "column": {
+            "entity_id": true,
+            "code": true,
+            "label": true,
+            "is_active": true,
+            "sort_order": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_RESOLUTION_TYPE_CODE": true
+        }
+    },
+    "rma_status_label": {
+        "column": {
+            "status_id": true,
+            "store_id": true,
+            "label": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_STATUS_LABEL_STATUS_ID_RMA_STATUS_ENTITY_ID": true,
+            "RMA_STATUS_LABEL_STORE_ID_STORE_STORE_ID": true
+        },
+        "index": {
+            "RMA_STATUS_LABEL_STORE_ID": true
+        }
+    },
+    "rma_reason_label": {
+        "column": {
+            "reason_id": true,
+            "store_id": true,
+            "label": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_REASON_LABEL_REASON_ID_RMA_REASON_ENTITY_ID": true,
+            "RMA_REASON_LABEL_STORE_ID_STORE_STORE_ID": true
+        },
+        "index": {
+            "RMA_REASON_LABEL_STORE_ID": true
+        }
+    },
+    "rma_resolution_type_label": {
+        "column": {
+            "resolution_type_id": true,
+            "store_id": true,
+            "label": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_RESOLUTION_TYPE_LABEL_RESOLUTION_TYPE_ID_RMA_RESOLUTION_TYPE_ENTITY_ID": true,
+            "RMA_RESOLUTION_TYPE_LABEL_STORE_ID_STORE_STORE_ID": true
+        },
+        "index": {
+            "RMA_RESOLUTION_TYPE_LABEL_STORE_ID": true
+        }
+    },
+    "rma_item_condition_label": {
+        "column": {
+            "condition_id": true,
+            "store_id": true,
+            "label": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_ITEM_CONDITION_LABEL_CONDITION_ID_RMA_ITEM_CONDITION_ENTITY_ID": true,
+            "RMA_ITEM_CONDITION_LABEL_STORE_ID_STORE_STORE_ID": true
+        },
+        "index": {
+            "RMA_ITEM_CONDITION_LABEL_STORE_ID": true
+        }
+    },
+    "rma_comment": {
+        "column": {
+            "entity_id": true,
+            "rma_id": true,
+            "author_type": true,
+            "author_name": true,
+            "comment": true,
+            "is_visible_to_customer": true,
+            "created_at": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "RMA_COMMENT_RMA_ID_RMA_ENTITY_ENTITY_ID": true
+        },
+        "index": {
+            "RMA_COMMENT_RMA_ID": true,
+            "RMA_COMMENT_CREATED_AT": true
+        }
+    }
+}

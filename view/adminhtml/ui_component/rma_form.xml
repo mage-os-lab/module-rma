@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<form xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Ui:etc/ui_configuration.xsd">
+    <argument name="data" xsi:type="array">
+        <item name="js_config" xsi:type="array">
+            <item name="provider" xsi:type="string">rma_form.rma_form_data_source</item>
+        </item>
+        <item name="label" xsi:type="string" translate="true">RMA Request</item>
+        <item name="template" xsi:type="string">templates/form/collapsible</item>
+    </argument>
+    <settings>
+        <buttons>
+            <button name="back" class="MageOS\RMA\Block\Adminhtml\Rma\Edit\BackButton"/>
+            <button name="delete" class="MageOS\RMA\Block\Adminhtml\Rma\Edit\DeleteButton"/>
+            <button name="save" class="MageOS\RMA\Block\Adminhtml\Rma\Edit\SaveButton"/>
+        </buttons>
+        <namespace>rma_form</namespace>
+        <dataScope>data</dataScope>
+        <deps>
+            <dep>rma_form.rma_form_data_source</dep>
+        </deps>
+    </settings>
+    <dataSource name="rma_form_data_source">
+        <argument name="data" xsi:type="array">
+            <item name="js_config" xsi:type="array">
+                <item name="component" xsi:type="string">Magento_Ui/js/form/provider</item>
+            </item>
+        </argument>
+        <settings>
+            <submitUrl path="rma/rma/save"/>
+        </settings>
+        <dataProvider class="MageOS\RMA\Model\RMA\DataProvider" name="rma_form_data_source">
+            <settings>
+                <requestFieldName>entity_id</requestFieldName>
+                <primaryFieldName>entity_id</primaryFieldName>
+            </settings>
+        </dataProvider>
+    </dataSource>
+
+    <!-- Edit mode: RMA Information as read-only HTML block with clickable links -->
+    <htmlContent name="rma_info" sortOrder="10">
+        <block class="MageOS\RMA\Block\Adminhtml\Rma\Edit\Info" name="rma_info_block"/>
+    </htmlContent>
+
+    <!-- Creation mode: editable fields for new RMA -->
+    <fieldset name="general" sortOrder="10">
+        <settings>
+            <label translate="true">RMA Information</label>
+        </settings>
+        <field name="entity_id" formElement="input">
+            <settings>
+                <dataType>text</dataType>
+                <visible>false</visible>
+                <dataScope>entity_id</dataScope>
+            </settings>
+        </field>
+        <field name="order_id" sortOrder="20" formElement="select"
+               component="MageOS_RMA/js/form/element/order-select">
+            <argument name="data" xsi:type="array">
+                <item name="config" xsi:type="array">
+                    <item name="filterOptions" xsi:type="boolean">true</item>
+                    <item name="searchOptions" xsi:type="boolean">true</item>
+                    <item name="searchUrl" xsi:type="url" path="rma/order/search"/>
+                    <item name="validationUrl" xsi:type="url" path="rma/order/getSelected"/>
+                    <item name="multiple" xsi:type="boolean">false</item>
+                    <item name="showCheckbox" xsi:type="boolean">false</item>
+                    <item name="disableLabel" xsi:type="boolean">true</item>
+                    <item name="levelsVisibility" xsi:type="number">1</item>
+                    <item name="filterPlaceholder" xsi:type="string" translate="true">Search by order number...</item>
+                    <item name="emptyOptionsHtml" xsi:type="string" translate="true">Start typing an order number to search</item>
+                    <item name="filterRateLimit" xsi:type="number">500</item>
+                    <item name="filterRateLimitMethod" xsi:type="string">notifyWhenChangesStop</item>
+                    <item name="itemsUrl" xsi:type="url" path="rma/order/items"/>
+                </item>
+            </argument>
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <elementTmpl>ui/grid/filters/elements/ui-select</elementTmpl>
+                <label translate="true">Order</label>
+                <dataScope>order_id</dataScope>
+            </settings>
+        </field>
+    </fieldset>
+
+    <!-- Order Items: creation mode shows empty container populated by JS, edit mode shows read-only table -->
+    <htmlContent name="order_items" sortOrder="15">
+        <block class="MageOS\RMA\Block\Adminhtml\Rma\Edit\OrderItems" name="rma_order_items_block"/>
+    </htmlContent>
+
+    <!-- Processing: status (always editable), reason + resolution (editable in creation, disabled in edit) -->
+    <fieldset name="processing" sortOrder="20">
+        <settings>
+            <label translate="true">Processing</label>
+        </settings>
+        <field name="status_id" sortOrder="10" formElement="select">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>int</dataType>
+                <label translate="true">Status</label>
+                <dataScope>status_id</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="MageOS\RMA\Model\Config\Source\Status"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="reason_id" sortOrder="20" formElement="select">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>int</dataType>
+                <label translate="true">Reason</label>
+                <dataScope>reason_id</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="MageOS\RMA\Model\Config\Source\Reason"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+        <field name="resolution_type_id" sortOrder="30" formElement="select">
+            <settings>
+                <validation>
+                    <rule name="required-entry" xsi:type="boolean">true</rule>
+                </validation>
+                <dataType>int</dataType>
+                <label translate="true">Resolution Type</label>
+                <dataScope>resolution_type_id</dataScope>
+            </settings>
+            <formElements>
+                <select>
+                    <settings>
+                        <options class="MageOS\RMA\Model\Config\Source\ResolutionType"/>
+                    </settings>
+                </select>
+            </formElements>
+        </field>
+    </fieldset>
+</form>

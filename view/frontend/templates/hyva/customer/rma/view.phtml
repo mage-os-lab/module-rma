@@ -1,0 +1,118 @@
+<?php
+
+use MageOS\RMA\Block\Customer\Rma\View;
+
+/**
+ * @var View $block
+ */
+
+$rma = $block->getRma();
+if (!$rma) {
+    return;
+}
+$items = $block->getRmaItems();
+?>
+<div class="mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-semibold text-gray-800">
+            <?= $block->escapeHtml(__('Return #%1', $rma->getIncrementId())) ?>
+        </h2>
+        <a href="<?= $block->escapeUrl($block->getBackUrl()) ?>"
+           class="inline-flex items-center text-sm text-primary hover:text-primary-darker font-medium hover:underline">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <?= $block->escapeHtml(__('Back to My Returns')) ?>
+        </a>
+    </div>
+
+    <div class="bg-white border border-gray-200 rounded-lg p-6 mb-6">
+        <h3 class="text-lg font-semibold text-gray-800 mb-4">
+            <?= $block->escapeHtml(__('Return Information')) ?>
+        </h3>
+        <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3">
+            <div>
+                <dt class="text-sm font-medium text-gray-500"><?= $block->escapeHtml(__('RMA #')) ?></dt>
+                <dd class="mt-1 text-sm text-gray-900"><?= $block->escapeHtml($rma->getIncrementId()) ?></dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500"><?= $block->escapeHtml(__('Order #')) ?></dt>
+                <dd class="mt-1 text-sm text-gray-900">#<?= $block->escapeHtml($block->getOrderIncrementId()) ?></dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500"><?= $block->escapeHtml(__('Status')) ?></dt>
+                <dd class="mt-1">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <?= $block->escapeHtml($block->getStatusLabel()) ?>
+                    </span>
+                </dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500"><?= $block->escapeHtml(__('Reason')) ?></dt>
+                <dd class="mt-1 text-sm text-gray-900"><?= $block->escapeHtml($block->getReasonLabel()) ?></dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500"><?= $block->escapeHtml(__('Preferred Resolution')) ?></dt>
+                <dd class="mt-1 text-sm text-gray-900"><?= $block->escapeHtml($block->getResolutionTypeLabel()) ?></dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500"><?= $block->escapeHtml(__('Created At')) ?></dt>
+                <dd class="mt-1 text-sm text-gray-900">
+                    <?= $block->escapeHtml($block->formatDate($rma->getCreatedAt(), \IntlDateFormatter::MEDIUM, true)) ?>
+                </dd>
+            </div>
+            <div>
+                <dt class="text-sm font-medium text-gray-500"><?= $block->escapeHtml(__('Updated At')) ?></dt>
+                <dd class="mt-1 text-sm text-gray-900">
+                    <?= $block->escapeHtml($block->formatDate($rma->getUpdatedAt(), \IntlDateFormatter::MEDIUM, true)) ?>
+                </dd>
+            </div>
+        </dl>
+    </div>
+
+    <?php if (!empty($items)): ?>
+        <div class="bg-white border border-gray-200 rounded-lg p-6">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">
+                <?= $block->escapeHtml(__('Items to Return')) ?>
+            </h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-gray-200">
+                    <thead class="bg-gray-50">
+                        <tr>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <?= $block->escapeHtml(__('Product')) ?>
+                            </th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <?= $block->escapeHtml(__('SKU')) ?>
+                            </th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <?= $block->escapeHtml(__('Quantity')) ?>
+                            </th>
+                            <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                <?= $block->escapeHtml(__('Condition')) ?>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="bg-white divide-y divide-gray-200">
+                        <?php foreach ($items as $item): ?>
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-4 py-3 text-sm text-gray-900">
+                                    <?= $block->escapeHtml($item['name']) ?>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-500 font-mono">
+                                    <?= $block->escapeHtml($item['sku']) ?>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900">
+                                    <?= (int)$item['qty_requested'] ?>
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-900">
+                                    <?= $block->escapeHtml($item['condition_label']) ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>

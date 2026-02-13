@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <rma>
+            <general>
+                <enabled>1</enabled>
+                <increment_id_prefix>RMA-</increment_id_prefix>
+                <return_period>30</return_period>
+            </general>
+            <policy>
+                <auto_approve>0</auto_approve>
+                <allowed_order_statuses>complete</allowed_order_statuses>
+            </policy>
+            <email>
+                <sender_identity>general</sender_identity>
+                <customer_new_template>rma_email_customer_new_template</customer_new_template>
+                <customer_status_change_template>rma_email_customer_status_change_template</customer_status_change_template>
+                <admin_new_template>rma_email_admin_new_template</admin_new_template>
+            </email>
+        </rma>
+    </default>
+</config>

@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Email:etc/email_templates.xsd">
+    <template id="rma_email_customer_new_template" label="New RMA Request (Customer)" file="rma_new_customer.html" type="html" module="MageOS_RMA" area="frontend"/>
+    <template id="rma_email_customer_status_change_template" label="RMA Status Change (Customer)" file="rma_status_change_customer.html" type="html" module="MageOS_RMA" area="frontend"/>
+    <template id="rma_email_admin_new_template" label="New RMA Request (Admin)" file="rma_new_admin.html" type="html" module="MageOS_RMA" area="frontend"/>
+</config>

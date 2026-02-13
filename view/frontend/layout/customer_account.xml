@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="customer_account_navigation">
+            <block class="MageOS\RMA\Block\Customer\Account\RmaLink" name="customer-account-navigation-rma-link">
+                <arguments>
+                    <argument name="path" xsi:type="string">rma/customer/history</argument>
+                    <argument name="label" xsi:type="string" translate="true">My Returns</argument>
+                    <argument name="sortOrder" xsi:type="number">100</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

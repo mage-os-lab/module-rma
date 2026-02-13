@@ -1,0 +1,263 @@
+<?php
+
+use MageOS\RMA\Block\Guest\Rma\Create;
+
+/**
+ * @var Create $block
+ */
+
+$order = $block->getOrder();
+if (!$order) {
+    return;
+}
+$reasons = $block->getReasons();
+$resolutionTypes = $block->getResolutionTypes();
+?>
+<script id="rma-create-config" type="application/json"><?= /* @noEscape */ $block->getConfigJson() ?></script>
+<div class="max-w-3xl mx-auto mb-6"
+     x-data="rmaCreateForm()"
+     x-init="initFromConfig()">
+
+    <h2 class="text-2xl font-semibold text-gray-800 mb-4">
+        <?= $block->escapeHtml(__('Request Return')) ?>
+    </h2>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-6">
+        <h3 class="text-sm font-semibold text-gray-600 uppercase mb-1">
+            <?= $block->escapeHtml(__('Order Information')) ?>
+        </h3>
+        <p class="text-sm text-gray-800">
+            <?= $block->escapeHtml(__('Order #')) ?>
+            <strong>#<?= $block->escapeHtml($order->getIncrementId()) ?></strong>
+            &mdash;
+            <?= $block->escapeHtml($order->getCustomerEmail()) ?>
+        </p>
+    </div>
+
+    <form action="<?= $block->escapeUrl($block->getPostUrl()) ?>"
+          method="post"
+          @submit.prevent="submitForm($event)">
+        <?= /* @noEscape */ $block->getBlockHtml('formkey') ?>
+        <input type="hidden" name="order_id" value="<?= (int)$order->getEntityId() ?>"/>
+
+        <div class="bg-white border border-gray-200 rounded-lg p-6 space-y-6">
+            <h3 class="text-lg font-semibold text-gray-800">
+                <?= $block->escapeHtml(__('Return Details')) ?>
+            </h3>
+
+            <!-- Items container -->
+            <div>
+                <template x-if="itemsLoading">
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                        <div class="flex items-center gap-2">
+                            <svg class="animate-spin h-4 w-4 text-blue-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            <span class="text-sm text-blue-700"><?= $block->escapeHtml(__('Loading items...')) ?></span>
+                        </div>
+                    </div>
+                </template>
+
+                <template x-if="!itemsLoading && itemsError">
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-4">
+                        <p class="text-sm text-red-700" x-text="itemsError"></p>
+                    </div>
+                </template>
+
+                <template x-if="!itemsLoading && !itemsError && orderItems.length === 0">
+                    <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+                        <p class="text-sm text-yellow-700">
+                            <?= $block->escapeHtml(__('No items available for return in this order.')) ?>
+                        </p>
+                    </div>
+                </template>
+
+                <template x-if="!itemsLoading && !itemsError && orderItems.length > 0">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            <?= $block->escapeHtml(__('Items to Return')) ?> <span class="text-red-500">*</span>
+                        </label>
+                        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-10">
+                                            <?= $block->escapeHtml(__('Select')) ?>
+                                        </th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                            <?= $block->escapeHtml(__('Product')) ?>
+                                        </th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                            <?= $block->escapeHtml(__('SKU')) ?>
+                                        </th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-32">
+                                            <?= $block->escapeHtml(__('Quantity')) ?>
+                                        </th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase w-40">
+                                            <?= $block->escapeHtml(__('Condition')) ?>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    <template x-for="item in orderItems" :key="item.order_item_id">
+                                        <tr class="hover:bg-gray-50 transition-colors">
+                                            <td class="px-4 py-3">
+                                                <input type="checkbox"
+                                                       :name="'items[' + item.order_item_id + '][selected]'"
+                                                       value="1"
+                                                       x-model="item.selected"
+                                                       class="h-4 w-4 text-primary border-gray-300 rounded focus:ring-primary"/>
+                                            </td>
+                                            <td class="px-4 py-3 text-sm text-gray-900" x-text="item.name"></td>
+                                            <td class="px-4 py-3 text-sm text-gray-500 font-mono" x-text="item.sku"></td>
+                                            <td class="px-4 py-3">
+                                                <input type="number"
+                                                       :name="'items[' + item.order_item_id + '][qty_requested]'"
+                                                       :value="item.qty_available"
+                                                       x-model.number="item.qty_requested"
+                                                       min="1"
+                                                       :max="item.qty_available"
+                                                       :disabled="!item.selected"
+                                                       class="w-20 border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none disabled:bg-gray-100 disabled:text-gray-400"/>
+                                                <span class="text-xs text-gray-400 ml-1"
+                                                      x-text="'(max: ' + item.qty_available + ')'"></span>
+                                            </td>
+                                            <td class="px-4 py-3">
+                                                <select :name="'items[' + item.order_item_id + '][condition_id]'"
+                                                        x-model="item.condition_id"
+                                                        :disabled="!item.selected"
+                                                        class="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none disabled:bg-gray-100 disabled:text-gray-400">
+                                                    <option value=""><?= $block->escapeHtml(__('-- Select --')) ?></option>
+                                                    <template x-for="cond in conditions" :key="cond.value">
+                                                        <option :value="cond.value" x-text="cond.label"></option>
+                                                    </template>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </template>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Reason -->
+            <div>
+                <label for="reason_id" class="block text-sm font-medium text-gray-700 mb-1">
+                    <?= $block->escapeHtml(__('Reason')) ?> <span class="text-red-500">*</span>
+                </label>
+                <select name="reason_id" id="reason_id" required
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none">
+                    <option value=""><?= $block->escapeHtml(__('-- Select a reason --')) ?></option>
+                    <?php foreach ($reasons as $reason): ?>
+                        <option value="<?= (int)$reason['value'] ?>">
+                            <?= $block->escapeHtml($reason['label']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <!-- Resolution -->
+            <div>
+                <label for="resolution_type_id" class="block text-sm font-medium text-gray-700 mb-1">
+                    <?= $block->escapeHtml(__('Preferred Resolution')) ?> <span class="text-red-500">*</span>
+                </label>
+                <select name="resolution_type_id" id="resolution_type_id" required
+                        class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none">
+                    <option value=""><?= $block->escapeHtml(__('-- Select a resolution --')) ?></option>
+                    <?php foreach ($resolutionTypes as $resolution): ?>
+                        <option value="<?= (int)$resolution['value'] ?>">
+                            <?= $block->escapeHtml($resolution['label']) ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+        </div>
+
+        <div class="flex justify-end mt-6">
+            <button type="submit"
+                    class="inline-flex items-center px-6 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-primary-darker transition-colors">
+                <?= $block->escapeHtml(__('Submit Return Request')) ?>
+            </button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function rmaCreateForm() {
+        return {
+            itemsAjaxUrl: '',
+            conditions: [],
+            preloadOrderId: null,
+            selectedOrderId: '',
+            orderItems: [],
+            itemsLoading: false,
+            itemsError: null,
+
+            initFromConfig() {
+                const config = JSON.parse(
+                    document.getElementById('rma-create-config').textContent
+                );
+                this.itemsAjaxUrl = config.itemsAjaxUrl;
+                this.conditions = config.conditions || [];
+                this.preloadOrderId = config.preloadOrderId;
+                this.selectedOrderId = config.preloadOrderId || '';
+
+                if (this.preloadOrderId) {
+                    this.loadOrderItems();
+                }
+            },
+
+            async loadOrderItems() {
+                const orderId = this.selectedOrderId || this.preloadOrderId;
+                if (!orderId) {
+                    this.orderItems = [];
+                    return;
+                }
+
+                this.itemsLoading = true;
+                this.itemsError = null;
+                this.orderItems = [];
+
+                try {
+                    const url = new URL(this.itemsAjaxUrl, window.location.origin);
+                    url.searchParams.set('order_id', orderId);
+
+                    const response = await fetch(url.toString(), {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const data = await response.json();
+
+                    if (data.error) {
+                        this.itemsError = data.error;
+                        return;
+                    }
+
+                    if (data.items && data.items.length > 0) {
+                        this.orderItems = data.items.map(item => ({
+                            ...item,
+                            selected: false,
+                            qty_requested: item.qty_available,
+                            condition_id: ''
+                        }));
+                    }
+                } catch {
+                    this.itemsError = '<?= $block->escapeJs(__('An error occurred while loading order items.')) ?>';
+                } finally {
+                    this.itemsLoading = false;
+                }
+            },
+
+            submitForm(event) {
+                const hasSelected = this.orderItems.some(item => item.selected);
+                if (!hasSelected) {
+                    alert('<?= $block->escapeJs(__('Please select at least one item to return.')) ?>');
+                    return;
+                }
+                event.target.submit();
+            }
+        };
+    }
+</script>

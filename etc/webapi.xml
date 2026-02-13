@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+<routes xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Webapi:etc/webapi.xsd">
+    <route url="/V1/rma/:entityId" method="GET">
+        <service class="MageOS\RMA\Api\RMARepositoryInterface" method="get"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/increment-id/:incrementId" method="GET">
+        <service class="MageOS\RMA\Api\RMARepositoryInterface" method="getByIncrementId"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma" method="POST">
+        <service class="MageOS\RMA\Api\RMARepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/:entityId" method="PUT">
+        <service class="MageOS\RMA\Api\RMARepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/:entityId" method="DELETE">
+        <service class="MageOS\RMA\Api\RMARepositoryInterface" method="deleteById"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/search" method="GET">
+        <service class="MageOS\RMA\Api\RMARepositoryInterface" method="getList"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/:rmaId/items" method="GET">
+        <service class="MageOS\RMA\Api\RmaItemManagementInterface" method="getList"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/:rmaId/items" method="POST">
+        <service class="MageOS\RMA\Api\RmaItemManagementInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/:rmaId/items/:itemId" method="DELETE">
+        <service class="MageOS\RMA\Api\RmaItemManagementInterface" method="deleteById"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/:rmaId/comments" method="GET">
+        <service class="MageOS\RMA\Api\RmaCommentManagementInterface" method="getList"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/:rmaId/comments" method="POST">
+        <service class="MageOS\RMA\Api\RmaCommentManagementInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_manage"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/status/:entityId" method="GET">
+        <service class="MageOS\RMA\Api\StatusRepositoryInterface" method="get"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_status"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/status" method="POST">
+        <service class="MageOS\RMA\Api\StatusRepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_status"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/status/:entityId" method="PUT">
+        <service class="MageOS\RMA\Api\StatusRepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_status"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/status/:entityId" method="DELETE">
+        <service class="MageOS\RMA\Api\StatusRepositoryInterface" method="deleteById"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_status"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/status/search" method="GET">
+        <service class="MageOS\RMA\Api\StatusRepositoryInterface" method="getList"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_status"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/reason/:entityId" method="GET">
+        <service class="MageOS\RMA\Api\ReasonRepositoryInterface" method="get"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_reason"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/reason" method="POST">
+        <service class="MageOS\RMA\Api\ReasonRepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_reason"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/reason/:entityId" method="PUT">
+        <service class="MageOS\RMA\Api\ReasonRepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_reason"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/reason/:entityId" method="DELETE">
+        <service class="MageOS\RMA\Api\ReasonRepositoryInterface" method="deleteById"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_reason"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/reason/search" method="GET">
+        <service class="MageOS\RMA\Api\ReasonRepositoryInterface" method="getList"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_reason"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/resolution-type/:entityId" method="GET">
+        <service class="MageOS\RMA\Api\ResolutionTypeRepositoryInterface" method="get"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_resolution_type"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/resolution-type" method="POST">
+        <service class="MageOS\RMA\Api\ResolutionTypeRepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_resolution_type"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/resolution-type/:entityId" method="PUT">
+        <service class="MageOS\RMA\Api\ResolutionTypeRepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_resolution_type"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/resolution-type/:entityId" method="DELETE">
+        <service class="MageOS\RMA\Api\ResolutionTypeRepositoryInterface" method="deleteById"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_resolution_type"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/resolution-type/search" method="GET">
+        <service class="MageOS\RMA\Api\ResolutionTypeRepositoryInterface" method="getList"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_resolution_type"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/item-condition/:entityId" method="GET">
+        <service class="MageOS\RMA\Api\ItemConditionRepositoryInterface" method="get"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_item_condition"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/item-condition" method="POST">
+        <service class="MageOS\RMA\Api\ItemConditionRepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_item_condition"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/item-condition/:entityId" method="PUT">
+        <service class="MageOS\RMA\Api\ItemConditionRepositoryInterface" method="save"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_item_condition"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/item-condition/:entityId" method="DELETE">
+        <service class="MageOS\RMA\Api\ItemConditionRepositoryInterface" method="deleteById"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_item_condition"/>
+        </resources>
+    </route>
+
+    <route url="/V1/rma/item-condition/search" method="GET">
+        <service class="MageOS\RMA\Api\ItemConditionRepositoryInterface" method="getList"/>
+        <resources>
+            <resource ref="MageOS_RMA::rma_item_condition"/>
+        </resources>
+    </route>
+
+</routes>

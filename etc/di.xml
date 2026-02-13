@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <!-- Data Interfaces -->
+    <preference for="MageOS\RMA\Api\Data\RMAInterface" type="MageOS\RMA\Model\RMA"/>
+    <preference for="MageOS\RMA\Api\Data\StatusInterface" type="MageOS\RMA\Model\Status"/>
+    <preference for="MageOS\RMA\Api\Data\ReasonInterface" type="MageOS\RMA\Model\Reason"/>
+    <preference for="MageOS\RMA\Api\Data\ResolutionTypeInterface" type="MageOS\RMA\Model\ResolutionType"/>
+    <preference for="MageOS\RMA\Api\Data\ItemConditionInterface" type="MageOS\RMA\Model\ItemCondition"/>
+    <preference for="MageOS\RMA\Api\Data\ItemInterface" type="MageOS\RMA\Model\Item"/>
+    <preference for="MageOS\RMA\Api\Data\CommentInterface" type="MageOS\RMA\Model\Comment"/>
+
+    <!-- SearchResults Interfaces -->
+    <preference for="MageOS\RMA\Api\Data\RMASearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="MageOS\RMA\Api\Data\CommentSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="MageOS\RMA\Api\Data\StatusSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="MageOS\RMA\Api\Data\ReasonSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="MageOS\RMA\Api\Data\ResolutionTypeSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="MageOS\RMA\Api\Data\ItemConditionSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+    <preference for="MageOS\RMA\Api\Data\ItemSearchResultsInterface" type="Magento\Framework\Api\SearchResults"/>
+
+    <!-- Email -->
+    <preference for="MageOS\RMA\Api\Email\SenderInterface" type="MageOS\RMA\Service\Email\Sender"/>
+
+    <!-- Grid Collections -->
+    <type name="Magento\Framework\View\Element\UiComponent\DataProvider\CollectionFactory">
+        <arguments>
+            <argument name="collections" xsi:type="array">
+                <item name="rma_listing_data_source" xsi:type="string">MageOS\RMA\Model\ResourceModel\RMA\Grid\Collection</item>
+                <item name="rma_status_listing_data_source" xsi:type="string">MageOS\RMA\Model\ResourceModel\Status\Grid\Collection</item>
+                <item name="rma_reason_listing_data_source" xsi:type="string">MageOS\RMA\Model\ResourceModel\Reason\Grid\Collection</item>
+                <item name="rma_resolution_type_listing_data_source" xsi:type="string">MageOS\RMA\Model\ResourceModel\ResolutionType\Grid\Collection</item>
+                <item name="rma_item_condition_listing_data_source" xsi:type="string">MageOS\RMA\Model\ResourceModel\ItemCondition\Grid\Collection</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Store Labels Modifier Pool -->
+    <virtualType name="MageOS\RMA\Ui\DataProvider\Form\Modifier\Pool" type="Magento\Ui\DataProvider\Modifier\Pool">
+        <arguments>
+            <argument name="modifiers" xsi:type="array">
+                <item name="store_labels" xsi:type="array">
+                    <item name="class" xsi:type="string">MageOS\RMA\Ui\DataProvider\Form\Modifier\StoreLabels</item>
+                    <item name="sortOrder" xsi:type="number">20</item>
+                </item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Form DataProviders with Modifier Pool -->
+    <type name="MageOS\RMA\Model\Status\DataProvider">
+        <arguments>
+            <argument name="pool" xsi:type="object">MageOS\RMA\Ui\DataProvider\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+    <type name="MageOS\RMA\Model\Reason\DataProvider">
+        <arguments>
+            <argument name="pool" xsi:type="object">MageOS\RMA\Ui\DataProvider\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+    <type name="MageOS\RMA\Model\ResolutionType\DataProvider">
+        <arguments>
+            <argument name="pool" xsi:type="object">MageOS\RMA\Ui\DataProvider\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+    <type name="MageOS\RMA\Model\ItemCondition\DataProvider">
+        <arguments>
+            <argument name="pool" xsi:type="object">MageOS\RMA\Ui\DataProvider\Form\Modifier\Pool</argument>
+        </arguments>
+    </type>
+
+    <!-- CLI Commands -->
+    <type name="Magento\Framework\Console\CommandListInterface">
+        <arguments>
+            <argument name="commands" xsi:type="array">
+                <item name="rma_cleanup" xsi:type="object">MageOS\RMA\Console\Command\CleanupCommand</item>
+                <item name="rma_list" xsi:type="object">MageOS\RMA\Console\Command\ListCommand</item>
+                <item name="rma_status" xsi:type="object">MageOS\RMA\Console\Command\StatusCommand</item>
+            </argument>
+        </arguments>
+    </type>
+
+    <!-- Repository Interfaces -->
+    <preference for="MageOS\RMA\Api\RMARepositoryInterface" type="MageOS\RMA\Model\RMARepository"/>
+    <preference for="MageOS\RMA\Api\StatusRepositoryInterface" type="MageOS\RMA\Model\StatusRepository"/>
+    <preference for="MageOS\RMA\Api\ReasonRepositoryInterface" type="MageOS\RMA\Model\ReasonRepository"/>
+    <preference for="MageOS\RMA\Api\ResolutionTypeRepositoryInterface" type="MageOS\RMA\Model\ResolutionTypeRepository"/>
+    <preference for="MageOS\RMA\Api\ItemConditionRepositoryInterface" type="MageOS\RMA\Model\ItemConditionRepository"/>
+    <preference for="MageOS\RMA\Api\ItemRepositoryInterface" type="MageOS\RMA\Model\ItemRepository"/>
+    <preference for="MageOS\RMA\Api\CommentRepositoryInterface" type="MageOS\RMA\Model\CommentRepository"/>
+
+    <!-- Management Interfaces -->
+    <preference for="MageOS\RMA\Api\RmaCommentManagementInterface" type="MageOS\RMA\Model\RmaCommentManagement"/>
+    <preference for="MageOS\RMA\Api\RmaItemManagementInterface" type="MageOS\RMA\Model\RmaItemManagement"/>
+
+    <!-- Form Button Virtual Types: Back -->
+    <virtualType name="MageOS\RMA\Block\Adminhtml\Rma\Edit\BackButton" type="MageOS\RMA\Block\Adminhtml\GenericBackButton"/>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\Status\Edit\BackButton" type="MageOS\RMA\Block\Adminhtml\GenericBackButton"/>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\Reason\Edit\BackButton" type="MageOS\RMA\Block\Adminhtml\GenericBackButton"/>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\ResolutionType\Edit\BackButton" type="MageOS\RMA\Block\Adminhtml\GenericBackButton"/>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\ItemCondition\Edit\BackButton" type="MageOS\RMA\Block\Adminhtml\GenericBackButton"/>
+
+    <!-- Form Button Virtual Types: Save -->
+    <virtualType name="MageOS\RMA\Block\Adminhtml\Rma\Edit\SaveButton" type="MageOS\RMA\Block\Adminhtml\GenericSaveButton"/>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\Status\Edit\SaveButton" type="MageOS\RMA\Block\Adminhtml\GenericSaveButton"/>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\Reason\Edit\SaveButton" type="MageOS\RMA\Block\Adminhtml\GenericSaveButton"/>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\ResolutionType\Edit\SaveButton" type="MageOS\RMA\Block\Adminhtml\GenericSaveButton"/>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\ItemCondition\Edit\SaveButton" type="MageOS\RMA\Block\Adminhtml\GenericSaveButton"/>
+
+    <!-- Form Button Virtual Types: Delete (with custom confirm messages) -->
+    <virtualType name="MageOS\RMA\Block\Adminhtml\Rma\Edit\DeleteButton" type="MageOS\RMA\Block\Adminhtml\GenericDeleteButton">
+        <arguments>
+            <argument name="confirmMessage" xsi:type="string">Are you sure you want to delete this RMA request?</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\Reason\Edit\DeleteButton" type="MageOS\RMA\Block\Adminhtml\GenericDeleteButton">
+        <arguments>
+            <argument name="confirmMessage" xsi:type="string">Are you sure you want to delete this reason?</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\ResolutionType\Edit\DeleteButton" type="MageOS\RMA\Block\Adminhtml\GenericDeleteButton">
+        <arguments>
+            <argument name="confirmMessage" xsi:type="string">Are you sure you want to delete this resolution type?</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="MageOS\RMA\Block\Adminhtml\ItemCondition\Edit\DeleteButton" type="MageOS\RMA\Block\Adminhtml\GenericDeleteButton">
+        <arguments>
+            <argument name="confirmMessage" xsi:type="string">Are you sure you want to delete this item condition?</argument>
+        </arguments>
+    </virtualType>
+</config>

@@ -1,0 +1,95 @@
+<?php
+
+use MageOS\RMA\Block\Guest\Rma\Create;
+
+/**
+ * @var Create $block
+ */
+
+$order = $block->getOrder();
+if (!$order) {
+    return;
+}
+$reasons = $block->getReasons();
+$resolutionTypes = $block->getResolutionTypes();
+$conditions = $block->getConditions();
+?>
+<div class="block block-rma-create">
+    <div class="block-content">
+        <div class="box box-order-info">
+            <strong class="box-title">
+                <span><?= $block->escapeHtml(__('Order Information')) ?></span>
+            </strong>
+            <div class="box-content">
+                <p>
+                    <?= $block->escapeHtml(__('Order #')) ?>
+                    <strong>#<?= $block->escapeHtml($order->getIncrementId()) ?></strong>
+                    &mdash;
+                    <?= $block->escapeHtml($order->getCustomerEmail()) ?>
+                </p>
+            </div>
+        </div>
+
+        <form id="rma-create-form"
+              action="<?= $block->escapeUrl($block->getPostUrl()) ?>"
+              method="post"
+              data-mage-init='{"MageOS_RMA/js/rma-create": {
+                  "itemsAjaxUrl": "<?= $block->escapeUrl($block->getItemsAjaxUrl()) ?>",
+                  "conditions": <?= /* @noEscape */ json_encode($conditions) ?>,
+                  "preloadOrderId": <?= (int)$order->getEntityId() ?>
+              }}'>
+            <?= /* @noEscape */ $block->getBlockHtml('formkey') ?>
+            <input type="hidden" name="order_id" value="<?= (int)$order->getEntityId() ?>"/>
+
+            <fieldset class="fieldset">
+                <legend class="legend"><span><?= $block->escapeHtml(__('Return Details')) ?></span></legend>
+
+                <div id="rma-order-items-container" class="field">
+                    <div class="message info">
+                        <span><?= $block->escapeHtml(__('Loading items...')) ?></span>
+                    </div>
+                </div>
+
+                <div class="field field-reason required">
+                    <label class="label" for="reason_id">
+                        <span><?= $block->escapeHtml(__('Reason')) ?></span>
+                    </label>
+                    <div class="control">
+                        <select name="reason_id" id="reason_id" class="select" required>
+                            <option value=""><?= $block->escapeHtml(__('-- Select a reason --')) ?></option>
+                            <?php foreach ($reasons as $reason): ?>
+                                <option value="<?= (int)$reason['value'] ?>">
+                                    <?= $block->escapeHtml($reason['label']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="field field-resolution required">
+                    <label class="label" for="resolution_type_id">
+                        <span><?= $block->escapeHtml(__('Preferred Resolution')) ?></span>
+                    </label>
+                    <div class="control">
+                        <select name="resolution_type_id" id="resolution_type_id" class="select" required>
+                            <option value=""><?= $block->escapeHtml(__('-- Select a resolution --')) ?></option>
+                            <?php foreach ($resolutionTypes as $resolution): ?>
+                                <option value="<?= (int)$resolution['value'] ?>">
+                                    <?= $block->escapeHtml($resolution['label']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                    </div>
+                </div>
+            </fieldset>
+
+            <div class="actions-toolbar">
+                <div class="primary">
+                    <button type="submit" class="action submit primary" title="<?= $block->escapeHtmlAttr(__('Submit Return Request')) ?>">
+                        <span><?= $block->escapeHtml(__('Submit Return Request')) ?></span>
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

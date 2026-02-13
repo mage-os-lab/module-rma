@@ -1,0 +1,216 @@
+<?php
+
+use MageOS\RMA\Block\Customer\Rma\View\Comments;
+
+/**
+ * @var Comments $block
+ */
+
+$comments = $block->getComments();
+$rmaId = $block->getRmaId();
+
+if (!$rmaId) {
+    return;
+}
+
+$lastId = 0;
+if (!empty($comments)) {
+    $lastComment = end($comments);
+    $lastId = $lastComment['entity_id'];
+}
+?>
+<div class="bg-white border border-gray-200 rounded-lg p-6 mt-6"
+     x-data="rmaComments({
+         rmaId: <?= (int)$rmaId ?>,
+         saveUrl: '<?= $block->escapeJs($block->getSaveUrl()) ?>',
+         loadListUrl: '<?= $block->escapeJs($block->getLoadListUrl()) ?>',
+         lastCommentId: <?= (int)$lastId ?>
+     })"
+     x-init="init()">
+
+    <h3 class="text-lg font-semibold text-gray-800 mb-4">
+        <?= $block->escapeHtml(__('Comments')) ?>
+    </h3>
+
+    <div x-ref="timeline"
+         class="max-h-96 overflow-y-auto border border-gray-200 rounded-lg p-4 mb-4 bg-gray-50 space-y-3">
+        <?php if (empty($comments)): ?>
+            <p x-show="commentsList.length === 0"
+               class="text-sm text-gray-400 italic">
+                <?= $block->escapeHtml(__('No comments yet. Start the conversation!')) ?>
+            </p>
+        <?php else: ?>
+            <?php foreach ($comments as $comment): ?>
+                <div class="p-3 rounded-lg text-sm <?= $comment['author_type'] === 'customer'
+                    ? 'bg-green-50 border border-green-200 ml-6'
+                    : 'bg-white border border-gray-200 mr-6' ?>"
+                     data-comment-id="<?= (int)$comment['entity_id'] ?>">
+                    <div class="flex items-center gap-2 mb-1 text-xs text-gray-500">
+                        <strong class="text-gray-700"><?= $block->escapeHtml($comment['author_name']) ?></strong>
+                        <?php if ($comment['author_type'] === 'admin'): ?>
+                            <span class="text-blue-600 font-medium"><?= $block->escapeHtml(__('Support')) ?></span>
+                        <?php endif; ?>
+                        <span><?= $block->escapeHtml($comment['created_at']) ?></span>
+                    </div>
+                    <div class="whitespace-pre-wrap text-gray-800"><?= $block->escapeHtml($comment['comment']) ?></div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+
+        <template x-for="comment in commentsList" :key="comment.entity_id">
+            <div class="p-3 rounded-lg text-sm"
+                 :class="comment.author_type === 'customer'
+                     ? 'bg-green-50 border border-green-200 ml-6'
+                     : 'bg-white border border-gray-200 mr-6'">
+                <div class="flex items-center gap-2 mb-1 text-xs text-gray-500">
+                    <strong class="text-gray-700" x-text="comment.author_name"></strong>
+                    <template x-if="comment.author_type === 'admin'">
+                        <span class="text-blue-600 font-medium"><?= $block->escapeHtml(__('Support')) ?></span>
+                    </template>
+                    <span x-text="comment.created_at"></span>
+                </div>
+                <div class="whitespace-pre-wrap text-gray-800" x-text="comment.comment"></div>
+            </div>
+        </template>
+    </div>
+
+    <div class="space-y-2">
+        <textarea x-ref="textarea"
+                  x-model="newComment"
+                  @keydown.ctrl.enter.prevent="submitComment()"
+                  rows="3"
+                  class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary focus:border-primary outline-none resize-y"
+                  :placeholder="'<?= $block->escapeJs(__('Type your message...')) ?>'"
+        ></textarea>
+        <div class="flex justify-end">
+            <button type="button"
+                    @click="submitComment()"
+                    :disabled="sending || !newComment.trim()"
+                    class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-primary-darker transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+                <template x-if="sending">
+                    <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                    </svg>
+                </template>
+                <?= $block->escapeHtml(__('Send')) ?>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function rmaComments(config) {
+        return {
+            rmaId: config.rmaId,
+            saveUrl: config.saveUrl,
+            loadListUrl: config.loadListUrl,
+            lastCommentId: config.lastCommentId || 0,
+            commentsList: [],
+            newComment: '',
+            sending: false,
+            pollTimer: null,
+            baseInterval: 10000,
+            maxInterval: 60000,
+            currentInterval: 10000,
+
+            init() {
+                this.scrollToBottom();
+                this.schedulePoll();
+
+                document.addEventListener('visibilitychange', () => {
+                    if (document.hidden) {
+                        this.stopPoll();
+                    } else {
+                        this.currentInterval = this.baseInterval;
+                        this.pollComments();
+                    }
+                });
+            },
+
+            scrollToBottom() {
+                this.$nextTick(() => {
+                    const el = this.$refs.timeline;
+                    if (el) {
+                        el.scrollTop = el.scrollHeight;
+                    }
+                });
+            },
+
+            schedulePoll() {
+                this.stopPoll();
+                this.pollTimer = setTimeout(() => this.pollComments(), this.currentInterval);
+            },
+
+            stopPoll() {
+                if (this.pollTimer) {
+                    clearTimeout(this.pollTimer);
+                    this.pollTimer = null;
+                }
+            },
+
+            async pollComments() {
+                try {
+                    const url = new URL(this.loadListUrl, window.location.origin);
+                    url.searchParams.set('rma_id', this.rmaId);
+                    url.searchParams.set('after_id', this.lastCommentId);
+
+                    const response = await fetch(url.toString(), {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const data = await response.json();
+
+                    if (data.success && data.comments && data.comments.length > 0) {
+                        data.comments.forEach(comment => {
+                            if (comment.entity_id > this.lastCommentId) {
+                                this.commentsList.push(comment);
+                                this.lastCommentId = comment.entity_id;
+                            }
+                        });
+                        this.scrollToBottom();
+                        this.currentInterval = this.baseInterval;
+                    } else {
+                        this.currentInterval = Math.min(this.currentInterval * 1.5, this.maxInterval);
+                    }
+                } catch {
+                    this.currentInterval = Math.min(this.currentInterval * 2, this.maxInterval);
+                } finally {
+                    this.schedulePoll();
+                }
+            },
+
+            async submitComment() {
+                const text = this.newComment.trim();
+                if (!text || this.sending) return;
+
+                this.sending = true;
+
+                try {
+                    const formKey = hyva.getCookie('form_key') || '';
+                    const formData = new FormData();
+                    formData.append('rma_id', this.rmaId);
+                    formData.append('comment', text);
+                    formData.append('form_key', formKey);
+
+                    const response = await fetch(this.saveUrl, {
+                        method: 'POST',
+                        body: formData,
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    });
+                    const data = await response.json();
+
+                    if (data.success && data.comment) {
+                        this.commentsList.push(data.comment);
+                        this.lastCommentId = data.comment.entity_id;
+                        this.newComment = '';
+                        this.scrollToBottom();
+                        this.currentInterval = this.baseInterval;
+                    }
+                } finally {
+                    this.sending = false;
+                    this.$refs.textarea.focus();
+                }
+            }
+        };
+    }
+</script>

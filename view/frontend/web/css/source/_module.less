@@ -1,0 +1,72 @@
+// MageOS RMA Module Styles
+
+.block-rma-history {
+    .block-title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+
+        .action.create {
+            .lib-link-as-button();
+            .lib-button-primary();
+        }
+    }
+}
+
+.block-rma-create {
+    .box-order-info {
+        margin-bottom: 20px;
+    }
+}
+
+.table-rma-items-select {
+    .col.select {
+        width: 50px;
+        text-align: center;
+    }
+
+    .col.qty {
+        .input-text.qty {
+            width: 60px;
+            text-align: center;
+        }
+
+        .qty-info {
+            margin-left: 5px;
+            color: @color-gray60;
+            font-size: @font-size__s;
+        }
+    }
+
+    .col.condition {
+        .select {
+            min-width: 150px;
+        }
+    }
+
+    tr {
+        input[disabled],
+        select[disabled] {
+            opacity: 0.5;
+        }
+    }
+}
+
+.block-rma-view {
+    .block-title {
+        margin-bottom: 20px;
+    }
+
+    .box {
+        margin-bottom: 30px;
+    }
+
+    .table-rma-info {
+        th {
+            padding-right: 20px;
+            font-weight: @font-weight__bold;
+            white-space: nowrap;
+        }
+    }
+}

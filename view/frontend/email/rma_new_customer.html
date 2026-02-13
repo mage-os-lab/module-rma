@@ -1,0 +1,89 @@
+<!--@subject {{trans "Your RMA Request #%increment_id from %store_name" increment_id=$rma.increment_id store_name=$store.frontend_name}} @-->
+<!--@vars {
+"var customer_name":"Customer Name",
+"var rma.increment_id":"RMA Increment ID",
+"var order.increment_id":"Order Increment ID",
+"var rma_reason_label":"RMA Reason",
+"var rma_resolution_label":"RMA Resolution Type",
+"var rma_items":"RMA Items Array",
+"var store.frontend_name":"Store Name",
+"var store_email":"Store Email",
+"var store_phone":"Store Phone",
+"var store_hours":"Store Hours",
+"var this.getUrl($store,'customer/account/',[_nosid:1])":"Customer Account URL"
+} @-->
+
+{{template config_path="design/email/header_template"}}
+
+<table>
+    <tr class="email-intro">
+        <td>
+            <p class="greeting">{{trans "%name," name=$customer_name}}</p>
+            <p>
+                {{trans "We have received your return request <strong>#%increment_id</strong> for order <strong>#%order_increment_id</strong>." increment_id=$rma.increment_id order_increment_id=$order.increment_id |raw}}
+            </p>
+            <p>
+                {{trans "We will review your request and get back to you as soon as possible."}}
+            </p>
+        </td>
+    </tr>
+    <tr class="email-information">
+        <td>
+            <table class="order-details">
+                <tr>
+                    <td>
+                        <h3>{{trans "RMA Details"}}</h3>
+                        <ul>
+                            <li><strong>{{trans "RMA Number:"}}</strong> {{var rma.increment_id}}</li>
+                            <li><strong>{{trans "Order Number:"}}</strong> {{var order.increment_id}}</li>
+                            {{depend rma_reason_label}}
+                            <li><strong>{{trans "Reason:"}}</strong> {{var rma_reason_label}}</li>
+                            {{/depend}}
+                            {{depend rma_resolution_label}}
+                            <li><strong>{{trans "Resolution:"}}</strong> {{var rma_resolution_label}}</li>
+                            {{/depend}}
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+
+            {{depend rma_items}}
+            <h3 style="margin-top:20px;">{{trans "Items to Return"}}</h3>
+            <table cellpadding="0" cellspacing="0" style="width:100%; border-collapse:collapse; margin-bottom:20px;">
+                <thead>
+                    <tr>
+                        <th style="text-align:left; padding:8px; border-bottom:2px solid #ccc; font-size:13px;"></th>
+                        <th style="text-align:left; padding:8px; border-bottom:2px solid #ccc; font-size:13px;">{{trans "Product"}}</th>
+                        <th style="text-align:left; padding:8px; border-bottom:2px solid #ccc; font-size:13px;">{{trans "SKU"}}</th>
+                        <th style="text-align:center; padding:8px; border-bottom:2px solid #ccc; font-size:13px;">{{trans "Qty"}}</th>
+                        <th style="text-align:left; padding:8px; border-bottom:2px solid #ccc; font-size:13px;">{{trans "Condition"}}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{for item in rma_items}}
+                    <tr>
+                        <td style="padding:8px; border-bottom:1px solid #e3e3e3; vertical-align:middle; width:85px;">{{var item.thumbnail_html}}</td>
+                        <td style="padding:8px; border-bottom:1px solid #e3e3e3; vertical-align:middle;">{{var item.name}}</td>
+                        <td style="padding:8px; border-bottom:1px solid #e3e3e3; vertical-align:middle; color:#666;">{{var item.sku}}</td>
+                        <td style="padding:8px; border-bottom:1px solid #e3e3e3; vertical-align:middle; text-align:center;">{{var item.qty_requested}}</td>
+                        <td style="padding:8px; border-bottom:1px solid #e3e3e3; vertical-align:middle;">{{var item.condition_label}}</td>
+                    </tr>
+                    {{/for}}
+                </tbody>
+            </table>
+            {{/depend}}
+
+            <p>
+                {{trans 'You can check the status of your return request by <a href="%account_url">logging into your account</a>.' account_url=$this.getUrl($store,'customer/account/',[_nosid:1]) |raw}}
+            </p>
+            <p>
+                {{trans 'If you have questions, you can email us at <a href="mailto:%store_email">%store_email</a>' store_email=$store_email |raw}}{{depend store_phone}} {{trans 'or call us at <a href="tel:%store_phone">%store_phone</a>' store_phone=$store_phone |raw}}{{/depend}}.
+                {{depend store_hours}}
+                    {{trans 'Our hours are <span class="no-link">%store_hours</span>.' store_hours=$store_hours |raw}}
+                {{/depend}}
+            </p>
+        </td>
+    </tr>
+</table>
+
+{{template config_path="design/email/footer_template"}}

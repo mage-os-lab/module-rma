@@ -1,0 +1,83 @@
+<?php
+
+use MageOS\RMA\Block\Customer\Rma\ListRma;
+
+/**
+ * @var ListRma $block
+ */
+
+$rmaCollection = $block->getRmaCollection();
+?>
+<div class="mb-6">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-2xl font-semibold text-gray-800"><?= $block->escapeHtml(__('My Returns')) ?></h2>
+        <a href="<?= $block->escapeUrl($block->getCreateUrl()) ?>"
+           class="inline-flex items-center px-4 py-2 bg-primary text-white text-sm font-medium rounded hover:bg-primary-darker transition-colors">
+            <?= $block->escapeHtml(__('Request Return')) ?>
+        </a>
+    </div>
+
+    <?php if ($rmaCollection && $rmaCollection->getSize()): ?>
+        <div class="overflow-x-auto border border-gray-200 rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <?= $block->escapeHtml(__('RMA #')) ?>
+                        </th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <?= $block->escapeHtml(__('Order #')) ?>
+                        </th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <?= $block->escapeHtml(__('Status')) ?>
+                        </th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <?= $block->escapeHtml(__('Created At')) ?>
+                        </th>
+                        <th scope="col" class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            <?= $block->escapeHtml(__('Action')) ?>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    <?php foreach ($rmaCollection as $rma): ?>
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                                <?= $block->escapeHtml($rma->getIncrementId()) ?>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-900 whitespace-nowrap">
+                                #<?= $block->escapeHtml($block->getOrderIncrementId((int)$rma->getOrderId())) ?>
+                            </td>
+                            <td class="px-4 py-3 text-sm whitespace-nowrap">
+                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                    <?= $block->escapeHtml($block->getStatusLabel((int)$rma->getStatusId())) ?>
+                                </span>
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">
+                                <?= $block->escapeHtml($block->formatDate($rma->getCreatedAt(), \IntlDateFormatter::MEDIUM)) ?>
+                            </td>
+                            <td class="px-4 py-3 text-sm whitespace-nowrap">
+                                <a href="<?= $block->escapeUrl($block->getViewUrl($rma)) ?>"
+                                   class="text-primary hover:text-primary-darker font-medium hover:underline">
+                                    <?= $block->escapeHtml(__('View')) ?>
+                                </a>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+
+        <?php if ($block->getPagerHtml()): ?>
+            <div class="mt-4">
+                <?= $block->getPagerHtml() ?>
+            </div>
+        <?php endif; ?>
+    <?php else: ?>
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p class="text-sm text-blue-700">
+                <?= $block->escapeHtml(__('You have no return requests.')) ?>
+            </p>
+        </div>
+    <?php endif; ?>
+</div>

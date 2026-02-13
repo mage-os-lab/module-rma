@@ -1,0 +1,116 @@
+type Query {
+    customerReturns(
+        pageSize: Int = 20
+        currentPage: Int = 1
+    ): CustomerReturnsOutput @resolver(class: "MageOS\\RMA\\Model\\Resolver\\CustomerReturns") @doc(description: "List return requests for the logged-in customer.")
+
+    customerReturn(
+        rma_id: Int!
+    ): CustomerReturn @resolver(class: "MageOS\\RMA\\Model\\Resolver\\CustomerReturn") @doc(description: "Get a single return request by ID for the logged-in customer.")
+
+    guestReturn(
+        order_number: String!
+        email: String!
+        rma_id: Int!
+    ): CustomerReturn @resolver(class: "MageOS\\RMA\\Model\\Resolver\\GuestReturn") @doc(description: "Get a single return request by ID for a guest order.")
+
+    returnComments(
+        rma_id: Int!
+        pageSize: Int = 50
+        currentPage: Int = 1
+    ): ReturnCommentsOutput @resolver(class: "MageOS\\RMA\\Model\\Resolver\\ReturnComments") @doc(description: "List comments for a return request (customer-visible only).")
+}
+
+type Mutation {
+    createCustomerReturn(
+        input: CreateReturnInput!
+    ): CreateReturnOutput @resolver(class: "MageOS\\RMA\\Model\\Resolver\\CreateCustomerReturn") @doc(description: "Create a return request for a customer order.")
+
+    createGuestReturn(
+        input: CreateGuestReturnInput!
+    ): CreateReturnOutput @resolver(class: "MageOS\\RMA\\Model\\Resolver\\CreateGuestReturn") @doc(description: "Create a return request for a guest order.")
+
+    addReturnComment(
+        input: AddReturnCommentInput!
+    ): ReturnComment @resolver(class: "MageOS\\RMA\\Model\\Resolver\\AddReturnComment") @doc(description: "Add a comment to a return request.")
+}
+
+type CustomerReturn {
+    rma_id: Int @doc(description: "The RMA entity ID.")
+    increment_id: String @doc(description: "The RMA increment ID (e.g. RMA-000001).")
+    order_number: String @doc(description: "The associated order increment ID.")
+    status: ReturnLookupValue @doc(description: "The current RMA status.")
+    reason: ReturnLookupValue @doc(description: "The return reason.")
+    resolution_type: ReturnLookupValue @doc(description: "The preferred resolution type.")
+    items: [ReturnItem] @doc(description: "The items included in this return.")
+    comments: [ReturnComment] @doc(description: "Customer-visible comments.")
+    created_at: String @doc(description: "Creation date.")
+    updated_at: String @doc(description: "Last update date.")
+}
+
+type ReturnItem {
+    item_id: Int @doc(description: "The RMA item entity ID.")
+    order_item_id: Int @doc(description: "The original order item ID.")
+    product_name: String @doc(description: "The product name.")
+    product_sku: String @doc(description: "The product SKU.")
+    qty_requested: Int @doc(description: "Quantity requested for return.")
+    qty_approved: Int @doc(description: "Quantity approved.")
+    qty_returned: Int @doc(description: "Quantity returned.")
+    condition: ReturnLookupValue @doc(description: "Item condition.")
+}
+
+type ReturnComment {
+    comment_id: Int @doc(description: "The comment entity ID.")
+    author_type: String @doc(description: "Author type: customer or admin.")
+    author_name: String @doc(description: "Author display name.")
+    comment: String @doc(description: "Comment text.")
+    created_at: String @doc(description: "Comment creation date.")
+}
+
+type ReturnLookupValue {
+    id: Int @doc(description: "Entity ID.")
+    code: String @doc(description: "Unique code.")
+    label: String @doc(description: "Store-localized label.")
+}
+
+type CustomerReturnsOutput {
+    items: [CustomerReturn] @doc(description: "List of return requests.")
+    total_count: Int @doc(description: "Total number of return requests.")
+    page_info: SearchResultPageInfo @doc(description: "Pagination info.")
+}
+
+type ReturnCommentsOutput {
+    items: [ReturnComment] @doc(description: "List of comments.")
+    total_count: Int @doc(description: "Total number of comments.")
+    page_info: SearchResultPageInfo @doc(description: "Pagination info.")
+}
+
+type CreateReturnOutput {
+    return: CustomerReturn @doc(description: "The created return request.")
+}
+
+input CreateReturnInput {
+    order_id: Int! @doc(description: "The order entity ID.")
+    reason_id: Int! @doc(description: "The return reason ID.")
+    resolution_type_id: Int! @doc(description: "The preferred resolution type ID.")
+    items: [CreateReturnItemInput!]! @doc(description: "Items to return.")
+}
+
+input CreateGuestReturnInput {
+    order_number: String! @doc(description: "The order increment ID.")
+    email: String! @doc(description: "The order billing email.")
+    reason_id: Int! @doc(description: "The return reason ID.")
+    resolution_type_id: Int! @doc(description: "The preferred resolution type ID.")
+    items: [CreateReturnItemInput!]! @doc(description: "Items to return.")
+}
+
+input CreateReturnItemInput {
+    order_item_id: Int! @doc(description: "The order item ID.")
+    qty_requested: Int! @doc(description: "Quantity to return.")
+    condition_id: Int @doc(description: "Item condition ID.")
+}
+
+input AddReturnCommentInput {
+    rma_id: Int! @doc(description: "The RMA entity ID.")
+    comment: String! @doc(description: "Comment text.")
+}

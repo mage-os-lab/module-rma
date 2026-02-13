@@ -1,0 +1,74 @@
+<?php
+
+use MageOS\RMA\Block\Adminhtml\Rma\Edit\Comments;
+
+/**
+ * @var Comments $block
+ */
+
+if (!$block->isEditMode()) {
+    return;
+}
+
+$comments = $block->getComments();
+$rmaId = $block->getRmaId();
+$lastId = 0;
+if (!empty($comments)) {
+    $lastComment = end($comments);
+    $lastId = $lastComment['entity_id'];
+}
+?>
+<div class="admin__fieldset" id="rma-comments-section">
+    <div class="admin__field-complex-title">
+        <span class="title"><?= $block->escapeHtml(__('Comments')) ?></span>
+    </div>
+
+    <div id="rma-comments-timeline" class="rma-comments-timeline" style="max-height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin-bottom: 15px; background: #fafafa;">
+        <?php if (empty($comments)): ?>
+            <p class="rma-no-comments" style="color: #999; font-style: italic;"><?= $block->escapeHtml(__('No comments yet.')) ?></p>
+        <?php else: ?>
+            <?php foreach ($comments as $comment): ?>
+                <div class="rma-comment <?= $block->escapeHtmlAttr($comment['author_type']) ?>"
+                     data-comment-id="<?= (int)$comment['entity_id'] ?>"
+                     style="margin-bottom: 10px; padding: 8px 12px; border-radius: 6px; <?= $comment['author_type'] === 'admin' ? 'background: #e8f0fe; margin-left: 20px;' : 'background: #fff; margin-right: 20px; border: 1px solid #ddd;' ?>">
+                    <div style="font-size: 11px; color: #666; margin-bottom: 4px;">
+                        <strong><?= $block->escapeHtml($comment['author_name']) ?></strong>
+                        <span style="margin-left: 8px;"><?= $block->escapeHtml($comment['created_at']) ?></span>
+                        <?php if (!$comment['is_visible_to_customer']): ?>
+                            <span style="margin-left: 8px; color: #e67700; font-weight: bold;"><?= $block->escapeHtml(__('Internal Note')) ?></span>
+                        <?php endif; ?>
+                    </div>
+                    <div style="white-space: pre-wrap;"><?= $block->escapeHtml($comment['comment']) ?></div>
+                </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
+    </div>
+
+    <div class="rma-comment-form" style="margin-bottom: 10px;">
+        <textarea id="rma-comment-text" rows="3" style="width: 100%; box-sizing: border-box;"
+                  placeholder="<?= $block->escapeHtmlAttr(__('Type your comment...')) ?>"></textarea>
+        <div style="margin-top: 8px; display: flex; align-items: center; gap: 15px;">
+            <label>
+                <input type="checkbox" id="rma-comment-visible" checked="checked"/>
+                <?= $block->escapeHtml(__('Visible to Customer')) ?>
+            </label>
+            <button type="button" id="rma-comment-submit" class="action-default scalable action-secondary">
+                <span><?= $block->escapeHtml(__('Add Comment')) ?></span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+{
+    "#rma-comments-section": {
+        "MageOS_RMA/js/rma-comments": {
+            "rmaId": <?= (int)$rmaId ?>,
+            "saveUrl": "<?= $block->escapeJs($block->getSaveUrl()) ?>",
+            "loadListUrl": "<?= $block->escapeJs($block->getLoadListUrl()) ?>",
+            "lastCommentId": <?= (int)$lastId ?>,
+            "isAdmin": true
+        }
+    }
+}
+</script>

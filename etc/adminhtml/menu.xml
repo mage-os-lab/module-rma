@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Backend:etc/menu.xsd">
+    <menu>
+        <add id="MageOS_RMA::rma"
+             title="RMA"
+             translate="title"
+             module="MageOS_RMA"
+             sortOrder="100"
+             parent="Magento_Sales::sales"
+             resource="MageOS_RMA::rma"/>
+        <add id="MageOS_RMA::rma_manage"
+             title="Manage RMA Requests"
+             translate="title"
+             module="MageOS_RMA"
+             sortOrder="10"
+             parent="MageOS_RMA::rma"
+             action="rma/rma/index"
+             resource="MageOS_RMA::rma_manage"/>
+        <add id="MageOS_RMA::rma_status"
+             title="RMA Statuses"
+             translate="title"
+             module="MageOS_RMA"
+             sortOrder="20"
+             parent="MageOS_RMA::rma"
+             action="rma/status/index"
+             resource="MageOS_RMA::rma_status"/>
+        <add id="MageOS_RMA::rma_reason"
+             title="RMA Reasons"
+             translate="title"
+             module="MageOS_RMA"
+             sortOrder="30"
+             parent="MageOS_RMA::rma"
+             action="rma/reason/index"
+             resource="MageOS_RMA::rma_reason"/>
+        <add id="MageOS_RMA::rma_resolution_type"
+             title="RMA Resolution Types"
+             translate="title"
+             module="MageOS_RMA"
+             sortOrder="40"
+             parent="MageOS_RMA::rma"
+             action="rma/resolutionType/index"
+             resource="MageOS_RMA::rma_resolution_type"/>
+        <add id="MageOS_RMA::rma_item_condition"
+             title="RMA Item Conditions"
+             translate="title"
+             module="MageOS_RMA"
+             sortOrder="50"
+             parent="MageOS_RMA::rma"
+             action="rma/itemCondition/index"
+             resource="MageOS_RMA::rma_item_condition"/>
+    </menu>
+</config>

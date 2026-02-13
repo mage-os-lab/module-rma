@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <body>
+        <referenceBlock name="rma.order.return.link" remove="true"/>
+        <referenceBlock name="sales.order.info.buttons">
+            <block class="MageOS\RMA\Block\Sales\Order\ReturnLink" name="rma.order.return.link.guest.hyva">
+                <arguments>
+                    <argument name="label" xsi:type="string" translate="true">Request Return</argument>
+                    <argument name="classes" xsi:type="string" translate="true">btn btn-secondary</argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>

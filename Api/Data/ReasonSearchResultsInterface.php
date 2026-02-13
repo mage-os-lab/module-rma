@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace MageOS\RMA\Api\Data;
+
+use Magento\Framework\Api\SearchResultsInterface;
+
+interface ReasonSearchResultsInterface extends SearchResultsInterface
+{
+    /**
+     * @return ReasonInterface[]
+     */
+    public function getItems(): array;
+
+    /**
+     * @param ReasonInterface[] $items
+     * @return $this
+     */
+    public function setItems(array $items): self;
+}

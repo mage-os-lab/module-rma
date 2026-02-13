@@ -1,0 +1,269 @@
+<?xml version="1.0"?>
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <!-- RMA Entity main table -->
+    <table name="rma_entity" resource="default" engine="innodb" comment="RMA Entity">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Entity ID"/>
+        <column xsi:type="varchar" name="increment_id" nullable="true" length="50" comment="Increment ID"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="false" comment="Order ID"/>
+        <column xsi:type="int" name="customer_id" unsigned="true" nullable="true" comment="Customer ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0" comment="Store ID"/>
+        <column xsi:type="varchar" name="customer_email" nullable="false" length="255" comment="Customer Email"/>
+        <column xsi:type="varchar" name="customer_name" nullable="false" length="255" comment="Customer Name"/>
+        <column xsi:type="int" name="status_id" unsigned="true" nullable="false" comment="Status ID"/>
+        <column xsi:type="int" name="reason_id" unsigned="true" nullable="false" comment="Reason ID"/>
+        <column xsi:type="int" name="resolution_type_id" unsigned="true" nullable="false" comment="Resolution Type ID"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="RMA_ENTITY_INCREMENT_ID">
+            <column name="increment_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="RMA_ENTITY_ORDER_ID_SALES_ORDER_ENTITY_ID"
+                    table="rma_entity" column="order_id"
+                    referenceTable="sales_order" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="RMA_ENTITY_CUSTOMER_ID_CUSTOMER_ENTITY_ENTITY_ID"
+                    table="rma_entity" column="customer_id"
+                    referenceTable="customer_entity" referenceColumn="entity_id"
+                    onDelete="SET NULL"/>
+        <constraint xsi:type="foreign" referenceId="RMA_ENTITY_STORE_ID_STORE_STORE_ID"
+                    table="rma_entity" column="store_id"
+                    referenceTable="store" referenceColumn="store_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="RMA_ENTITY_STATUS_ID_RMA_STATUS_ENTITY_ID"
+                    table="rma_entity" column="status_id"
+                    referenceTable="rma_status" referenceColumn="entity_id"
+                    onDelete="NO ACTION"/>
+        <constraint xsi:type="foreign" referenceId="RMA_ENTITY_REASON_ID_RMA_REASON_ENTITY_ID"
+                    table="rma_entity" column="reason_id"
+                    referenceTable="rma_reason" referenceColumn="entity_id"
+                    onDelete="NO ACTION"/>
+        <constraint xsi:type="foreign" referenceId="RMA_ENTITY_RESOLUTION_TYPE_ID_RMA_RESOLUTION_TYPE_ENTITY_ID"
+                    table="rma_entity" column="resolution_type_id"
+                    referenceTable="rma_resolution_type" referenceColumn="entity_id"
+                    onDelete="NO ACTION"/>
+        <index referenceId="RMA_ENTITY_ORDER_ID" indexType="btree">
+            <column name="order_id"/>
+        </index>
+        <index referenceId="RMA_ENTITY_CUSTOMER_ID" indexType="btree">
+            <column name="customer_id"/>
+        </index>
+        <index referenceId="RMA_ENTITY_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+        <index referenceId="RMA_ENTITY_STATUS_ID" indexType="btree">
+            <column name="status_id"/>
+        </index>
+    </table>
+
+    <!-- RMA Item table -->
+    <table name="rma_item" resource="default" engine="innodb" comment="RMA Item">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Item ID"/>
+        <column xsi:type="int" name="rma_id" unsigned="true" nullable="false" comment="RMA Entity ID"/>
+        <column xsi:type="int" name="order_item_id" unsigned="true" nullable="false" comment="Order Item ID"/>
+        <column xsi:type="int" name="qty_requested" unsigned="true" nullable="false" comment="Qty Requested"/>
+        <column xsi:type="int" name="qty_approved" unsigned="true" nullable="true" comment="Qty Approved"/>
+        <column xsi:type="int" name="qty_returned" unsigned="true" nullable="true" comment="Qty Returned"/>
+        <column xsi:type="int" name="condition_id" unsigned="true" nullable="true" comment="Item Condition ID"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <column xsi:type="timestamp" name="updated_at" on_update="true" nullable="false" default="CURRENT_TIMESTAMP" comment="Updated At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="RMA_ITEM_RMA_ID_RMA_ENTITY_ENTITY_ID"
+                    table="rma_item" column="rma_id"
+                    referenceTable="rma_entity" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="RMA_ITEM_ORDER_ITEM_ID_SALES_ORDER_ITEM_ITEM_ID"
+                    table="rma_item" column="order_item_id"
+                    referenceTable="sales_order_item" referenceColumn="item_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="RMA_ITEM_CONDITION_ID_RMA_ITEM_CONDITION_ENTITY_ID"
+                    table="rma_item" column="condition_id"
+                    referenceTable="rma_item_condition" referenceColumn="entity_id"
+                    onDelete="SET NULL"/>
+        <index referenceId="RMA_ITEM_RMA_ID" indexType="btree">
+            <column name="rma_id"/>
+        </index>
+        <index referenceId="RMA_ITEM_ORDER_ITEM_ID" indexType="btree">
+            <column name="order_item_id"/>
+        </index>
+        <index referenceId="RMA_ITEM_CONDITION_ID" indexType="btree">
+            <column name="condition_id"/>
+        </index>
+    </table>
+
+    <!-- RMA Status lookup table -->
+    <table name="rma_status" resource="default" engine="innodb" comment="RMA Status">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Status ID"/>
+        <column xsi:type="varchar" name="code" nullable="false" length="64" comment="Status Code"/>
+        <column xsi:type="varchar" name="label" nullable="false" length="255" comment="Status Label"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="1" comment="Is Active"/>
+        <column xsi:type="int" name="sort_order" unsigned="true" nullable="false" default="0" comment="Sort Order"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="RMA_STATUS_CODE">
+            <column name="code"/>
+        </constraint>
+    </table>
+
+    <!-- RMA Reason lookup table -->
+    <table name="rma_reason" resource="default" engine="innodb" comment="RMA Reason">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Reason ID"/>
+        <column xsi:type="varchar" name="code" nullable="false" length="64" comment="Reason Code"/>
+        <column xsi:type="varchar" name="label" nullable="false" length="255" comment="Reason Label"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="1" comment="Is Active"/>
+        <column xsi:type="int" name="sort_order" unsigned="true" nullable="false" default="0" comment="Sort Order"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="RMA_REASON_CODE">
+            <column name="code"/>
+        </constraint>
+    </table>
+
+    <!-- RMA Resolution Type lookup table -->
+    <table name="rma_resolution_type" resource="default" engine="innodb" comment="RMA Resolution Type">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Resolution Type ID"/>
+        <column xsi:type="varchar" name="code" nullable="false" length="64" comment="Resolution Type Code"/>
+        <column xsi:type="varchar" name="label" nullable="false" length="255" comment="Resolution Type Label"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="1" comment="Is Active"/>
+        <column xsi:type="int" name="sort_order" unsigned="true" nullable="false" default="0" comment="Sort Order"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="RMA_RESOLUTION_TYPE_CODE">
+            <column name="code"/>
+        </constraint>
+    </table>
+
+    <!-- RMA Item Condition lookup table -->
+    <table name="rma_item_condition" resource="default" engine="innodb" comment="RMA Item Condition">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Condition ID"/>
+        <column xsi:type="varchar" name="code" nullable="false" length="64" comment="Condition Code"/>
+        <column xsi:type="varchar" name="label" nullable="false" length="255" comment="Condition Label"/>
+        <column xsi:type="smallint" name="is_active" unsigned="true" nullable="false" default="1" comment="Is Active"/>
+        <column xsi:type="int" name="sort_order" unsigned="true" nullable="false" default="0" comment="Sort Order"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="RMA_ITEM_CONDITION_CODE">
+            <column name="code"/>
+        </constraint>
+    </table>
+
+    <!-- RMA Status Store Label table -->
+    <table name="rma_status_label" resource="default" engine="innodb" comment="RMA Status Store Label">
+        <column xsi:type="int" name="status_id" unsigned="true" nullable="false" comment="Status ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" comment="Store ID"/>
+        <column xsi:type="varchar" name="label" nullable="false" length="255" comment="Label"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="status_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="RMA_STATUS_LABEL_STATUS_ID_RMA_STATUS_ENTITY_ID"
+                    table="rma_status_label" column="status_id"
+                    referenceTable="rma_status" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="RMA_STATUS_LABEL_STORE_ID_STORE_STORE_ID"
+                    table="rma_status_label" column="store_id"
+                    referenceTable="store" referenceColumn="store_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="RMA_STATUS_LABEL_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+
+    <!-- RMA Reason Store Label table -->
+    <table name="rma_reason_label" resource="default" engine="innodb" comment="RMA Reason Store Label">
+        <column xsi:type="int" name="reason_id" unsigned="true" nullable="false" comment="Reason ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" comment="Store ID"/>
+        <column xsi:type="varchar" name="label" nullable="false" length="255" comment="Label"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="reason_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="RMA_REASON_LABEL_REASON_ID_RMA_REASON_ENTITY_ID"
+                    table="rma_reason_label" column="reason_id"
+                    referenceTable="rma_reason" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="RMA_REASON_LABEL_STORE_ID_STORE_STORE_ID"
+                    table="rma_reason_label" column="store_id"
+                    referenceTable="store" referenceColumn="store_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="RMA_REASON_LABEL_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+
+    <!-- RMA Resolution Type Store Label table -->
+    <table name="rma_resolution_type_label" resource="default" engine="innodb" comment="RMA Resolution Type Store Label">
+        <column xsi:type="int" name="resolution_type_id" unsigned="true" nullable="false" comment="Resolution Type ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" comment="Store ID"/>
+        <column xsi:type="varchar" name="label" nullable="false" length="255" comment="Label"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="resolution_type_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="RMA_RESOLUTION_TYPE_LABEL_RESOLUTION_TYPE_ID_RMA_RESOLUTION_TYPE_ENTITY_ID"
+                    table="rma_resolution_type_label" column="resolution_type_id"
+                    referenceTable="rma_resolution_type" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="RMA_RESOLUTION_TYPE_LABEL_STORE_ID_STORE_STORE_ID"
+                    table="rma_resolution_type_label" column="store_id"
+                    referenceTable="store" referenceColumn="store_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="RMA_RESOLUTION_TYPE_LABEL_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+
+    <!-- RMA Item Condition Store Label table -->
+    <table name="rma_item_condition_label" resource="default" engine="innodb" comment="RMA Item Condition Store Label">
+        <column xsi:type="int" name="condition_id" unsigned="true" nullable="false" comment="Condition ID"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" comment="Store ID"/>
+        <column xsi:type="varchar" name="label" nullable="false" length="255" comment="Label"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="condition_id"/>
+            <column name="store_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="RMA_ITEM_CONDITION_LABEL_CONDITION_ID_RMA_ITEM_CONDITION_ENTITY_ID"
+                    table="rma_item_condition_label" column="condition_id"
+                    referenceTable="rma_item_condition" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <constraint xsi:type="foreign" referenceId="RMA_ITEM_CONDITION_LABEL_STORE_ID_STORE_STORE_ID"
+                    table="rma_item_condition_label" column="store_id"
+                    referenceTable="store" referenceColumn="store_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="RMA_ITEM_CONDITION_LABEL_STORE_ID" indexType="btree">
+            <column name="store_id"/>
+        </index>
+    </table>
+
+    <!-- RMA Comment table -->
+    <table name="rma_comment" resource="default" engine="innodb" comment="RMA Comment">
+        <column xsi:type="int" name="entity_id" unsigned="true" nullable="false" identity="true" comment="Comment ID"/>
+        <column xsi:type="int" name="rma_id" unsigned="true" nullable="false" comment="RMA Entity ID"/>
+        <column xsi:type="varchar" name="author_type" nullable="false" length="32" comment="Author Type (customer or admin)"/>
+        <column xsi:type="varchar" name="author_name" nullable="false" length="255" comment="Author Name"/>
+        <column xsi:type="text" name="comment" nullable="false" comment="Comment Text"/>
+        <column xsi:type="boolean" name="is_visible_to_customer" nullable="false" default="true" comment="Is Visible to Customer"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP" comment="Created At"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="RMA_COMMENT_RMA_ID_RMA_ENTITY_ENTITY_ID"
+                    table="rma_comment" column="rma_id"
+                    referenceTable="rma_entity" referenceColumn="entity_id"
+                    onDelete="CASCADE"/>
+        <index referenceId="RMA_COMMENT_RMA_ID" indexType="btree">
+            <column name="rma_id"/>
+        </index>
+        <index referenceId="RMA_COMMENT_CREATED_AT" indexType="btree">
+            <column name="created_at"/>
+        </index>
+    </table>
+</schema>

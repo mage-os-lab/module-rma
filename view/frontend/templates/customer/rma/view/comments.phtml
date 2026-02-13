@@ -1,0 +1,76 @@
+<?php
+
+use MageOS\RMA\Block\Customer\Rma\View\Comments;
+
+/**
+ * @var Comments $block
+ */
+
+$comments = $block->getComments();
+$rmaId = $block->getRmaId();
+
+if (!$rmaId) {
+    return;
+}
+
+$lastId = 0;
+if (!empty($comments)) {
+    $lastComment = end($comments);
+    $lastId = $lastComment['entity_id'];
+}
+?>
+<div class="block block-rma-comments" id="rma-comments-section">
+    <div class="block-title">
+        <strong><?= $block->escapeHtml(__('Comments')) ?></strong>
+    </div>
+    <div class="block-content">
+        <div id="rma-comments-timeline" class="rma-comments-timeline" style="max-height: 400px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-bottom: 15px; background: #fafafa;">
+            <?php if (empty($comments)): ?>
+                <p class="rma-no-comments" style="color: #999; font-style: italic;"><?= $block->escapeHtml(__('No comments yet. Start the conversation!')) ?></p>
+            <?php else: ?>
+                <?php foreach ($comments as $comment): ?>
+                    <div class="rma-comment <?= $block->escapeHtmlAttr($comment['author_type']) ?>"
+                         data-comment-id="<?= (int)$comment['entity_id'] ?>"
+                         style="margin-bottom: 10px; padding: 8px 12px; border-radius: 6px; <?= $comment['author_type'] === 'customer' ? 'background: #e8f4e8; margin-left: 20px;' : 'background: #fff; margin-right: 20px; border: 1px solid #ddd;' ?>">
+                        <div style="font-size: 11px; color: #666; margin-bottom: 4px;">
+                            <strong><?= $block->escapeHtml($comment['author_name']) ?></strong>
+                            <?php if ($comment['author_type'] === 'admin'): ?>
+                                <span style="margin-left: 4px; font-size: 10px; color: #1979c3;"><?= $block->escapeHtml(__('Support')) ?></span>
+                            <?php endif; ?>
+                            <span style="margin-left: 8px;"><?= $block->escapeHtml($comment['created_at']) ?></span>
+                        </div>
+                        <div style="white-space: pre-wrap;"><?= $block->escapeHtml($comment['comment']) ?></div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
+
+        <div class="rma-comment-form">
+            <div class="field">
+                <textarea id="rma-comment-text" rows="3" class="input-text"
+                          placeholder="<?= $block->escapeHtmlAttr(__('Type your message...')) ?>"></textarea>
+            </div>
+            <div class="actions-toolbar" style="margin-top: 8px;">
+                <div class="primary">
+                    <button type="button" id="rma-comment-submit" class="action submit primary">
+                        <span><?= $block->escapeHtml(__('Send')) ?></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/x-magento-init">
+{
+    "#rma-comments-section": {
+        "MageOS_RMA/js/rma-comments": {
+            "rmaId": <?= (int)$rmaId ?>,
+            "saveUrl": "<?= $block->escapeJs($block->getSaveUrl()) ?>",
+            "loadListUrl": "<?= $block->escapeJs($block->getLoadListUrl()) ?>",
+            "lastCommentId": <?= (int)$lastId ?>,
+            "isAdmin": false
+        }
+    }
+}
+</script>

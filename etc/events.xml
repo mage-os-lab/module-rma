@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="rma_created_after">
+        <observer name="mageos_rma_send_new_rma_emails" instance="MageOS\RMA\Observer\SendNewRmaEmails"/>
+        <observer name="mageos_rma_auto_approve" instance="MageOS\RMA\Observer\AutoApproveRma"/>
+    </event>
+    <event name="rma_status_change_after">
+        <observer name="mageos_rma_send_status_change_email" instance="MageOS\RMA\Observer\SendStatusChangeEmail"/>
+    </event>
+</config>
