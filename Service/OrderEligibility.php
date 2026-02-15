@@ -11,6 +11,8 @@ use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Magento\Sales\Model\ResourceModel\Order\CollectionFactory as OrderCollectionFactory;
+use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Exception\NoSuchEntityException;
 
 class OrderEligibility
 {
@@ -20,13 +22,15 @@ class OrderEligibility
      * @param OrderCollectionFactory $orderCollectionFactory
      * @param OrderRepositoryInterface $orderRepository
      * @param TimezoneInterface $timezone
+     * @param StoreManagerInterface $storeManager
      */
     public function __construct(
         protected readonly ModuleConfig $moduleConfig,
         protected readonly RmaItemCollectionFactory $rmaItemCollectionFactory,
         protected readonly OrderCollectionFactory $orderCollectionFactory,
         protected readonly OrderRepositoryInterface $orderRepository,
-        protected readonly TimezoneInterface $timezone
+        protected readonly TimezoneInterface $timezone,
+        protected readonly StoreManagerInterface $storeManager
     ) {
     }
 
@@ -117,9 +121,11 @@ class OrderEligibility
         $allowedStatuses = $this->moduleConfig->getAllowedOrderStatuses($storeId);
         $returnPeriod = $this->moduleConfig->getReturnPeriod($storeId);
 
+        $storeIds = $this->getStoreIdsForWebsite($storeId);
+
         $collection = $this->orderCollectionFactory->create();
         $collection->addFieldToFilter('customer_id', $customerId);
-        $collection->addFieldToFilter('store_id', $storeId);
+        $collection->addFieldToFilter('store_id', ['in' => $storeIds]);
 
         if (!empty($allowedStatuses)) {
             $collection->addFieldToFilter('status', ['in' => $allowedStatuses]);
@@ -151,6 +157,26 @@ class OrderEligibility
         $cutoffDate = strtotime("-{$returnPeriod} days");
 
         return $orderDate >= $cutoffDate;
+    }
+
+    /**
+     * @param int $storeId
+     * @return array|int[]
+     * @throws NoSuchEntityException
+     */
+    protected function getStoreIdsForWebsite(int $storeId): array
+    {
+        $store = $this->storeManager->getStore($storeId);
+        $websiteId = (int)$store->getWebsiteId();
+        $storeIds = [];
+
+        foreach ($this->storeManager->getStores() as $s) {
+            if ((int)$s->getWebsiteId() === $websiteId) {
+                $storeIds[] = (int)$s->getId();
+            }
+        }
+
+        return $storeIds ?: [$storeId];
     }
 
     /**
