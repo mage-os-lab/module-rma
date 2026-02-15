@@ -13,6 +13,11 @@ class Collection extends AbstractCollection
     /**
      * @var string
      */
+    protected $_idFieldName = 'entity_id';
+
+    /**
+     * @var string
+     */
     protected $_eventPrefix = 'rma_resolution_type_collection';
 
     /**
