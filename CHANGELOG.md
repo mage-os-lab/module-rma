@@ -1,5 +1,11 @@
 # Changelog
 
+## [1.0.1] - 2026-02-15
+
+### Fixed
+- Admin mass delete not working on all grids (RMA, Status, Reason, Resolution Type, Item Condition) — added missing `$_idFieldName` to all collections so `Document::getId()` resolves correctly in `Filter::getFilterIds()`
+- Multi-store order eligibility — `OrderEligibility::getCustomerEligibleOrders()` now filters by all store IDs within the same website instead of exact store ID
+
 ## [1.0.0] - 2026-02-13
 
 ### Added
